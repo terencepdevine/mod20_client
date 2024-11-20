@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom scrollbar styling for WebKit browsers (Chrome, Safari) */
+::-webkit-scrollbar {
+  @apply w-2;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-800;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-800 bg-opacity-20;
+}
+
+::-webkit-scrollbar-button {
+  display: none;
+}
+
+a {
+  @apply text-gray-100 transition-colors;
+}
+
+a:hover {
+  @apply text-sky-500;
+}
