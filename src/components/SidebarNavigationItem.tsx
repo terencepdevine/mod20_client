@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { SystemNavigationItemType } from "../types/SystemNavigation";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { ChevronRightIcon } from "@heroicons/react/20/solid";
 
 export const SidebarNavigationItem: React.FC<SystemNavigationItemType> = ({
@@ -10,6 +10,7 @@ export const SidebarNavigationItem: React.FC<SystemNavigationItemType> = ({
   children,
 }) => {
   const [active, setActive] = useState(false);
+  const { roleId } = useParams();
 
   return (
     <li>
@@ -30,7 +31,7 @@ export const SidebarNavigationItem: React.FC<SystemNavigationItemType> = ({
               <li key={i}>
                 <Link
                   to={`/systems/${systemId}/${slug}/${child.id}`}
-                  className={`block rounded-lg px-4 py-2 text-sm ${i === 6 && "bg-gray-900 font-bold text-sky-500"}`}
+                  className={`block rounded-lg px-4 py-2 text-sm ${child.id === roleId && "bg-gray-900 font-bold text-sky-500"}`}
                 >
                   {child.name}
                 </Link>

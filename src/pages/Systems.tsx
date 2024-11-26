@@ -12,7 +12,7 @@ const System: React.FC = () => {
         <h1 className="text-3xl">Systems</h1>
         {systems.map((system) => {
           return (
-            <SystemProvider systemId={system.id}>
+            <SystemProvider systemId={system.id} key={system.id}>
               <SystemBlock />
             </SystemProvider>
           );
@@ -25,7 +25,11 @@ const System: React.FC = () => {
 export default System;
 
 const SystemBlock: React.FC = () => {
-  const { data: system } = useSystem();
+  const { data: system, isPending, isError, error } = useSystem();
+
+  if (isPending) return <h1>Loading...</h1>;
+  if (isError && error !== null)
+    return <h1>Error: {error.message || "Something went wrong"}</h1>;
 
   if (!system) {
     console.error("System Context is Null");

@@ -1,10 +1,10 @@
 import Hero from "./Hero";
-import { System } from "../types/System";
-import { useSystem } from "../hooks/useSystem";
+import { useSystem } from "../hooks/useProvider";
 
 const Main: React.FC = () => {
   const { data: system, isPending, isError, error } = useSystem();
-  const { name, introduction } = system as System;
+  const name = system?.name as string;
+  const introduction = system?.introduction as string;
 
   if (!system) {
     console.error("System Context is null");

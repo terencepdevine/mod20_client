@@ -2,8 +2,8 @@ import { LoaderFunctionArgs } from "react-router-dom";
 import { getRace } from "../services/apiSystem";
 import { queryClient } from "../query/queryClient";
 
-const raceQuery = (systemId: string, raceId: string) => ({
-  queryKey: ["race", raceId],
+export const raceQuery = (systemId: string, raceId: string) => ({
+  queryKey: ["race", systemId, raceId],
   queryFn: async () => getRace(systemId, raceId),
 });
 

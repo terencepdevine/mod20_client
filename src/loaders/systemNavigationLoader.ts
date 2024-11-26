@@ -1,10 +1,13 @@
 import { LoaderFunctionArgs } from "react-router-dom";
 import { getNavigation } from "../services/apiSystem";
 import { queryClient } from "../query/queryClient";
+import { SystemNavigationType } from "../types/SystemNavigation";
 
-const systemNavigationQuery = (id: string) => ({
-  queryKey: ["systemNavigation", id],
-  queryFn: async () => getNavigation(id),
+export const systemNavigationQuery = (systemid: string) => ({
+  queryKey: ["systemNavigation", systemid],
+  queryFn: async (): Promise<SystemNavigationType> => {
+    return await getNavigation(systemid);
+  },
 });
 
 export const systemNavigationLoader = async ({

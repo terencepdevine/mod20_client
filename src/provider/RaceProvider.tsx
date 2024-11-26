@@ -2,7 +2,7 @@ import { createContext, ReactNode } from "react";
 import { Race } from "../types/Race";
 import { ContextType } from "../types/Context";
 import { useQuery } from "@tanstack/react-query";
-import { getRace } from "../services/apiSystem";
+import { raceQuery } from "../loaders/raceLoader";
 
 export const RaceContext = createContext<ContextType<Race> | undefined>(
   undefined,
@@ -13,10 +13,8 @@ export const RaceProvider: React.FC<{
   raceId: string;
   children: ReactNode;
 }> = ({ systemId, raceId, children }) => {
-  const { data, isPending, isError, error } = useQuery({
-    queryKey: ["race", systemId, raceId],
-    queryFn: () => getRace(systemId, raceId),
-  });
+  const query = raceQuery(systemId, raceId);
+  const { data, isPending, isError, error } = useQuery(query);
 
   return (
     <RaceContext.Provider

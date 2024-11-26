@@ -1,9 +1,9 @@
-export type SystemNavigationType = {
+export interface SystemNavigationType {
   system: string;
   systemSlug: string;
   systemId: string;
   navigation: SystemNavigationItemType[];
-};
+}
 
 export interface SystemNavigationItemType {
   name: string;

@@ -1,18 +1,17 @@
 import { ChevronRightIcon } from "@heroicons/react/16/solid";
-import { useContext } from "react";
-import { SystemNavigationContext } from "../provider/SystemNavigationProvider";
-import { SystemNavigationType } from "../types/SystemNavigation";
+import { useSystemNavigation } from "../hooks/useProvider";
 
 const Breadcrumbs: React.FC = () => {
-  const navigation = useContext(
-    SystemNavigationContext,
-  ) as SystemNavigationType;
+  const { data } = useSystemNavigation();
+  const name = data?.system;
+  // const navigation = useContext(
+  //   SystemNavigationContext,
+  // ) as SystemNavigationType;
+  // const { data: system, isPending, isError, error } = useSystem();
 
   return (
     <ul className="relative z-10 flex items-center gap-2">
-      {navigation.system && (
-        <BreadcrumbsItem name={navigation.system} index={0} />
-      )}
+      {name && <BreadcrumbsItem name={name} index={0} />}
       {/* {list.map((item, i) => (
         <BreadcrumbsItem name={item.name} index={i} key={i} />
       ))} */}

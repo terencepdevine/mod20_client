@@ -2,9 +2,9 @@ import { LoaderFunctionArgs } from "react-router-dom";
 import { getRole } from "../services/apiSystem";
 import { queryClient } from "../query/queryClient";
 
-const roleQuery = (stringId: string, roleId: string) => ({
-  queryKey: ["role", roleId],
-  queryFn: async () => getRole(stringId, roleId),
+export const roleQuery = (systemId: string, roleId: string) => ({
+  queryKey: ["role", systemId, roleId],
+  queryFn: async () => getRole(systemId, roleId),
 });
 
 export const roleLoader = async ({ params }: LoaderFunctionArgs) => {

@@ -18,14 +18,16 @@ const RaceContent: React.FC = () => {
   const { data: race, isPending, isError, error } = useRace();
   const name = race?.name as string;
 
-  if (!race) {
-    console.error("RaceContext is null");
-    return <div>Error: Race data is missing.</div>;
-  }
+  console.log(race);
 
   if (isPending) return <h1>Loading...</h1>;
   if (isError && error !== null)
     return <h1>Error: {error.message || "Something went wrong"}</h1>;
+
+  if (!race) {
+    console.error("RaceContext is null");
+    return <div>Error: Race data is missing.</div>;
+  }
 
   return (
     <div className="flex-1">
