@@ -1,6 +1,6 @@
 import { Outlet, useParams } from "react-router-dom";
-import { SystemNavigationProvider } from "../provider/SystemNavigationProvider";
-import Sidebar from "./Sidebar";
+import { SystemNavigationProvider } from "../../provider/SystemNavigationProvider";
+import Sidebar from "../Sidebar";
 
 const SystemLayout: React.FC = () => {
   const { systemId } = useParams();

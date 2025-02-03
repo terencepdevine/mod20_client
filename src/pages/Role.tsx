@@ -3,6 +3,7 @@ import Hero from "../components/Hero";
 import { useRole } from "../hooks/useProvider";
 import { useParams } from "react-router-dom";
 import { Role as RoleType } from "../types/Role";
+import { RoleWithBreadcrumbs } from "../services/apiSystem";
 
 const Role: React.FC = () => {
   const { systemId, roleId } = useParams();
@@ -15,7 +16,7 @@ const Role: React.FC = () => {
 };
 
 const RoleContent: React.FC = () => {
-  const { data, isPending, isError, error } = useRole();
+  const { data, isPending, isError, error } = useRole<RoleWithBreadcrumbs>();
   const role = data?.role as RoleType;
 
   console.log(data);
@@ -32,7 +33,13 @@ const RoleContent: React.FC = () => {
   return (
     <div className="flex-1">
       <Hero name={role.name} />
-      {role.introduction}
+      <div className="prose p-6">
+        {role.introduction && (
+          <blockquote
+            dangerouslySetInnerHTML={{ __html: role.introduction as string }}
+          ></blockquote>
+        )}
+      </div>
     </div>
   );
 };

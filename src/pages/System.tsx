@@ -19,19 +19,27 @@ const System: React.FC = () => {
 
 const SystemContent: React.FC = () => {
   const { data: system, isPending, isError, error } = useSystem();
+  const { introduction } = system;
+
+  if (isPending) return <h1>Loading...</h1>;
+  if (isError && error !== null)
+    return <h1>Error: {error.message || "Something went wrong"}</h1>;
 
   if (!system) {
     console.error("System Context is null");
     return <div>Error: System data is missing.</div>;
   }
 
-  if (isPending) return <h1>Loading...</h1>;
-  if (isError && error !== null)
-    return <h1>Error: {error.message || "Something went wrong"}</h1>;
-
   return (
     <main className="h-full flex-1 overflow-hidden overflow-y-auto">
       <Hero name={system.name} />
+      <div className="prose p-6">
+        {introduction && (
+          <blockquote
+            dangerouslySetInnerHTML={{ __html: introduction as string }}
+          ></blockquote>
+        )}
+      </div>
     </main>
   );
 };

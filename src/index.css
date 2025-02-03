@@ -26,3 +26,15 @@ a {
 a:hover {
   @apply text-sky-500;
 }
+
+.btn {
+  @apply flex items-center justify-center gap-2 rounded bg-sky-600 p-1 font-bold shadow;
+}
+
+.btn-full {
+  @apply w-full;
+}
+
+.card {
+  @apply rounded-lg bg-gray-900;
+}

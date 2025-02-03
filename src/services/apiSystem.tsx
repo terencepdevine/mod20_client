@@ -20,11 +20,93 @@ export async function getSystems(): Promise<System> {
   return data;
 }
 
-export async function getRole(systemId: string, roleId: string): Promise<Role> {
-  const res = await fetch(`${API_URL}/systems/${systemId}/roles/${roleId}`);
-  if (!res.ok) throw Error(`Failed getting Role #${roleId}`);
+export async function createEditSystem(
+  newSystem: {
+    name: string;
+    version?: string;
+    introduction?: string;
+  },
+  id: string,
+): Promise<System> {
+  let res;
+  if (!id) {
+    res = await fetch(`${API_URL}/systems/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newSystem),
+    });
+  }
 
-  const { data }: { data: Role } = await res.json();
+  if (id) {
+    res = await fetch(`${API_URL}/systems/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newSystem),
+    });
+  }
+
+  if (!res.ok) {
+    const errorData = await res.json();
+    throw Error(
+      `Failed to create System: ${errorData.message || res.statusText}`,
+    );
+  }
+
+  const { data }: { data: System } = await res.json();
+  return data;
+}
+
+// export async function createEditSystem(newSystem, id) {
+//   const res = await fetch(`${API_URL}/systems`);
+// }
+
+// export async function updateSystem(newSystem: {
+//   name: string;
+//   version?: string;
+//   introduction?: string;
+// }): Promise<System> {
+//   const res = await fetch(`${API_URL}/systems/:id`, {
+//     method: "POST",
+//     headers: {
+//       "Content-Type": "application/json",
+//     },
+//     body: JSON.stringify(newSystem),
+//   });
+
+//   if (!res.ok) {
+//     const errorData = await res.json();
+//     throw Error(
+//       `Failed to update System: ${errorData.message || res.statusText}`,
+//     );
+//   }
+
+//   const { data }: { data: System } = await res.json();
+//   return data;
+// }
+
+export async function getRoles(systemId: string): Promise<unknown> {
+  const res = await fetch(`${API_URL}/systems/${systemId}/roles`);
+  if (!res.ok) throw Error(`Failed getting Roles for System #${systemId}`);
+
+  const { data }: { data: Role[] } = await res.json();
+  return data;
+}
+
+export interface RoleWithBreadcrumbs {
+  breadcrumbs: Array<{ name: string; slug: string }>;
+  role: Role;
+}
+
+export async function getRole(
+  systemId: string,
+  roleId: string,
+): Promise<RoleWithBreadcrumbs> {
+  const res = await fetch(`${API_URL}/systems/${systemId}/roles/${roleId}`);
+  if (!res.ok) throw new Error(`Failed getting Role #${roleId}`);
+
+  const { data }: { data: RoleWithBreadcrumbs } = await res.json();
   return data;
 }
 

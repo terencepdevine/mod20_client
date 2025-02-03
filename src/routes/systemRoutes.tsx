@@ -1,6 +1,6 @@
 import { RouteObject } from "react-router-dom";
 
-import SystemLayout from "../components/SystemLayout";
+import SystemLayout from "../components/layout/SystemLayout";
 import System from "../pages/System";
 import Systems from "../pages/Systems";
 import Role from "../pages/Role";
@@ -11,6 +11,8 @@ import { systemLoader } from "../loaders/systemLoader";
 import { systemNavigationLoader } from "../loaders/systemNavigationLoader";
 import { roleLoader } from "../loaders/roleLoader";
 import { raceLoader } from "../loaders/raceLoader";
+import Roles from "../pages/Roles";
+import { rolesLoader } from "../loaders/rolesLoader";
 
 const systemRoutes: RouteObject[] = [
   {
@@ -26,6 +28,11 @@ const systemRoutes: RouteObject[] = [
         path: "/systems/:systemId",
         element: <System />,
         loader: systemLoader,
+      },
+      {
+        path: "/systems/:systemId/roles",
+        element: <Roles />,
+        loader: rolesLoader,
       },
       {
         path: "/systems/:systemId/roles/:roleId",
