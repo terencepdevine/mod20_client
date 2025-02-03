@@ -9,7 +9,7 @@ const Burst: React.FC<BurstProps> = ({
 }) => {
   return (
     <div
-      className={`absolute left-0 top-0 z-0 ${height} w-full bg-[radial-gradient(${align},theme(colors.sky.900)_0%,theme(colors.gray.950)_70%)] opacity-20`}
+      className={`absolute left-0 top-0 z-0 ${height} w-full bg-[radial-gradient(${align},var(--color-sky-900)_0%,var(--color-gray-950)_70%)] opacity-20`}
     ></div>
   );
 };

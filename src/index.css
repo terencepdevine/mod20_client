@@ -1,6 +1,24 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+/* @config '../tailwind.config.js';
+
+/*
+  The default border color has changed to `currentColor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentColor);
+  }
+}
 
 /* Custom scrollbar styling for WebKit browsers (Chrome, Safari) */
 ::-webkit-scrollbar {
@@ -12,7 +30,7 @@
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-gray-800 bg-opacity-20;
+  @apply bg-gray-800;
 }
 
 ::-webkit-scrollbar-button {
@@ -28,7 +46,7 @@ a:hover {
 }
 
 .btn {
-  @apply flex items-center justify-center gap-2 rounded bg-sky-600 p-1 font-bold shadow;
+  @apply flex items-center justify-center gap-2 rounded-sm bg-sky-600 p-1 font-bold shadow-sm;
 }
 
 .btn-full {

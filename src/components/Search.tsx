@@ -63,7 +63,7 @@ const Search: React.FC<SearchProps> = ({ placeholder = "Search" }) => {
             ref={inputRef}
             placeholder={placeholder}
             value={search}
-            className={`w-auto flex-1 flex-grow-0 bg-transparent py-2 text-gray-100 placeholder:italic placeholder:text-gray-500 focus:outline-none lg:text-lg`}
+            className={`w-auto flex-1 grow-0 bg-transparent py-2 text-gray-100 placeholder:italic placeholder:text-gray-500 focus:outline-hidden lg:text-lg`}
             onChange={handleInputChange}
             onFocus={handleFocus}
             onBlur={handleBlur}
@@ -82,7 +82,7 @@ const Search: React.FC<SearchProps> = ({ placeholder = "Search" }) => {
         </div>
         <div className="hidden sm:block">
           <div
-            className={`flex cursor-pointer items-center gap-2 rounded px-2 py-0.5 ${searchList && "bg-gray-950"}`}
+            className={`flex cursor-pointer items-center gap-2 rounded-sm px-2 py-0.5 ${searchList && "bg-gray-950"}`}
             onClick={() => setSearchList((searchList) => !searchList)}
           >
             <span className="text-sm italic text-gray-500">All Systems</span>

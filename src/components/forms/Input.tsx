@@ -28,7 +28,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           defaultValue={defaultValue}
           placeholder={placeholder}
           ref={ref}
-          className={`rounded-lg bg-gray-900 p-4 outline-none transition-all hover:bg-gray-850 focus:bg-gray-850 ${variant === "large" && "text-2xl"}`}
+          className={`rounded-lg bg-gray-900 p-4 outline-hidden transition-all hover:bg-gray-850 focus:bg-gray-850 ${variant === "large" && "text-2xl"}`}
           {...rest}
         />
       </div>

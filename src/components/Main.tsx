@@ -19,7 +19,7 @@ const Main: React.FC = () => {
     <main className="h-full flex-1 overflow-hidden overflow-y-auto">
       <Hero name={name} />
       <div className="relative grid grid-cols-3 gap-4 p-4 lg:gap-6 lg:p-6">
-        <div className="absolute left-0 top-0 z-[-1] h-[400px] w-full bg-[radial-gradient(ellipse_at_top,theme(colors.sky.800)_0%,theme(colors.gray.950)_70%)] opacity-10"></div>
+        <div className="absolute left-0 top-0 z-[-1] h-[400px] w-full bg-[radial-gradient(ellipse_at_top,var(--color-sky-800)_0%,var(--color-gray-950)_70%)] opacity-10"></div>
         <div className="prose col-span-2">
           {introduction && (
             <blockquote

@@ -9,7 +9,7 @@ interface PillProps {
 const Pill: React.FC<PillProps> = ({ children, bg, color }) => {
   return (
     <span
-      className={`rounded ${bg ? bg : "bg-gray-950"} ${color ? color : "text-sky-500"} px-2 py-1 text-xs uppercase tracking-wider`}
+      className={`rounded-sm ${bg ? bg : "bg-gray-950"} ${color ? color : "text-sky-500"} px-2 py-1 text-xs uppercase tracking-wider`}
     >
       {children}
     </span>

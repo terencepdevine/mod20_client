@@ -21,7 +21,7 @@ const DropdownList: React.FC<DropdownListProps> = ({ text = "Download" }) => {
   ];
 
   return (
-    <div className="flex flex-col items-center gap-4 rounded-lg bg-gray-900 px-4 py-2 font-bold shadow">
+    <div className="flex flex-col items-center gap-4 rounded-lg bg-gray-900 px-4 py-2 font-bold shadow-sm">
       <div
         className="flex w-full cursor-pointer justify-between gap-4 hover:text-sky-400"
         onClick={() => setActive((active) => !active)}

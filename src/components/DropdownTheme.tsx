@@ -28,7 +28,7 @@ const DropdownTheme: React.FC = () => {
 
   return (
     <span
-      className="flex cursor-pointer flex-col rounded bg-gray-950 px-2 py-2 text-sm text-gray-300"
+      className="flex cursor-pointer flex-col rounded-sm bg-gray-950 px-2 py-2 text-sm text-gray-300"
       onClick={() => setActive((active) => !active)}
     >
       <div className="flex items-center justify-between">

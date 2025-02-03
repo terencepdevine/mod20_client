@@ -35,7 +35,7 @@ const Header: React.FC = () => {
               <SocialNavigation />
             </div>
             <div
-              className={`w-6 cursor-pointer overflow-clip rounded-lg shadow md:w-11`}
+              className={`w-6 cursor-pointer overflow-clip rounded-lg shadow-sm md:w-11`}
               onClick={() => setShowUserMenu((showUserMenu) => !showUserMenu)}
             >
               <div className="md:hidden">
