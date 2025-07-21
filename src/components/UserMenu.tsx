@@ -34,7 +34,7 @@ const UserMenu: React.FC = () => {
               <li key={i}>
                 <Link
                   to={item.to}
-                  className="flex items-center gap-2 rounded-sm px-2 py-2 text-sm text-gray-300 hover:bg-gray-925"
+                  className="flex items-center gap-2 rounded-xs px-2 py-2 text-sm text-gray-300 hover:bg-gray-925"
                 >
                   <div className="h-4 w-4 text-sky-500">{item.icon}</div>
                   {item.name}

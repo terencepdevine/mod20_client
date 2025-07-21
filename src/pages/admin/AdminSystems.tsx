@@ -1,5 +1,5 @@
 import { Link, useLoaderData } from "react-router-dom";
-import { System } from "../../types/System";
+import { System } from "@mod20/types";
 
 const AdminSystems: React.FC = () => {
   const systems = useLoaderData() as System[];
@@ -10,8 +10,8 @@ const AdminSystems: React.FC = () => {
       <ul>
         {systems.map((system) => {
           return (
-            <li>
-              <Link to={`/admin/systems/${system.id}`}>{system.name}</Link>
+            <li key={system.id}>
+              <Link to={`/admin/systems/${system.slug}`}>{system.name}</Link>
             </li>
           );
         })}

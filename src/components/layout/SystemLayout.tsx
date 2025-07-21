@@ -1,16 +1,16 @@
 import { Outlet, useParams } from "react-router-dom";
 import { SystemNavigationProvider } from "../../provider/SystemNavigationProvider";
-import Sidebar from "../Sidebar";
+import Sidebar from "../Sidebar/Sidebar";
 
 const SystemLayout: React.FC = () => {
-  const { systemId } = useParams();
+  const { systemSlug } = useParams();
 
-  if (!systemId) {
-    return <h1>Error: Missing system ID</h1>;
+  if (!systemSlug) {
+    return <h1>Error: Missing system Slug</h1>;
   }
 
   return (
-    <SystemNavigationProvider systemId={systemId}>
+    <SystemNavigationProvider systemSlug={systemSlug}>
       <Sidebar />
       <Outlet />
     </SystemNavigationProvider>

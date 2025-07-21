@@ -58,7 +58,7 @@ const TextEditor: React.FC<TextEditorProps> = ({
                 { title: "Blockquote", block: "blockquote" },
               ],
               content_style: `
-          body { background-color: #1f2937; color: #d1d5db; } 
+          body { background-color: #111827; color: #d1d5db; } 
           a { color: #60a5fa; } 
           h1, h2, h3, h4, h5, h6 { color: #ffffff; } 
         `,

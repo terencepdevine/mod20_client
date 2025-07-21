@@ -1,5 +1,5 @@
 import { Link, useLoaderData } from "react-router-dom";
-import { System as SystemType } from "../types/System";
+import { SystemType } from "@mod20/types";
 import { SystemProvider } from "../provider/SystemProvider";
 import { useSystem } from "../hooks/useProvider";
 
@@ -12,7 +12,7 @@ const System: React.FC = () => {
         <h1 className="text-3xl">Systems</h1>
         {systems.map((system) => {
           return (
-            <SystemProvider systemId={system.id} key={system.id}>
+            <SystemProvider systemSlug={system.slug} key={system.id}>
               <SystemBlock />
             </SystemProvider>
           );
@@ -38,5 +38,9 @@ const SystemBlock: React.FC = () => {
 
   const { name } = system;
 
-  return <Link to={`/systems/${system.id}`}>{name}</Link>;
+  return (
+    <div key={system.id}>
+      <Link to={`/systems/${system.slug}`}>{name}</Link>
+    </div>
+  );
 };

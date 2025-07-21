@@ -1,28 +1,33 @@
 import { createContext, ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
+
 import { ContextType } from "../types/Context";
-import { systemNavigationQuery } from "../loaders/systemNavigationLoader";
 import { SystemNavigationType } from "../types/SystemNavigation";
+import { getNavigation } from "../services/apiSystem";
 
 export const SystemNavigationContext = createContext<
   ContextType<SystemNavigationType> | undefined
 >(undefined);
 
 export const SystemNavigationProvider: React.FC<{
-  systemId: string;
+  systemSlug: string;
   children: ReactNode;
-}> = ({ systemId, children }) => {
-  const query = systemNavigationQuery(systemId);
-  const { data, isPending, isError, error } =
-    useQuery<SystemNavigationType>(query);
+}> = ({ systemSlug, children }) => {
+  const { data, isPending, isError, error } = useQuery({
+    queryKey: ["systemNavigation", systemSlug],
+    queryFn: () => getNavigation(systemSlug),
+  });
+
+  if (isPending) return <div>Loading...</div>;
+  if (error instanceof Error) return <div>Error: {error.message}</div>;
 
   return (
     <SystemNavigationContext.Provider
       value={{
-        data: data ?? null,
+        data: data || null,
         isPending,
         isError,
-        error: (error as Error) || null,
+        error: error as Error | null,
       }}
     >
       {children}

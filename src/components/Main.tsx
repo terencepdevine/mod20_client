@@ -1,4 +1,4 @@
-import Hero from "./Hero";
+import Hero from "./Hero/Hero";
 import { useSystem } from "../hooks/useProvider";
 
 const Main: React.FC = () => {

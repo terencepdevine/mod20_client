@@ -6,7 +6,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 import { queryClient } from "./query/queryClient";
 import appRoutes from "./routes/appRoutes";
-import AppLayout from "./components/layout/AppLayout";
+import AppLayout from "./components/AppLayout/AppLayout";
 import systemRoutes from "./routes/systemRoutes";
 import adminRoutes from "./routes/adminRoutes";
 import { ToastContainer } from "react-toastify";
@@ -26,13 +26,8 @@ function App() {
 
       <ToastContainer
         position="bottom-right"
-        theme="dark"
-        toastClassName={() =>
-          "relative flex p-3 min-h-10 rounded-md bg-gray-800 text-gray-300 shadow-lg"
-        }
         autoClose={5000}
         hideProgressBar={false}
-        progressClassName="bg-sky-500"
       />
     </QueryClientProvider>
   );

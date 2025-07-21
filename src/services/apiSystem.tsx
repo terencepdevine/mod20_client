@@ -1,22 +1,22 @@
 import { Race } from "../types/Race";
 import { Role } from "../types/Role";
-import { System } from "../types/System";
+import { SystemType } from "../types/System";
 
 const API_URL = "http://127.0.0.1:3000/api/v1";
 
-export async function getSystem(systemId: string): Promise<System> {
-  const res = await fetch(`${API_URL}/systems/${systemId}`);
-  if (!res.ok) throw Error(`Failed getting System #${systemId}`);
+export async function getSystem(systemSlug: string): Promise<SystemType> {
+  const res = await fetch(`${API_URL}/systems/${systemSlug}`);
+  if (!res.ok) throw Error(`Failed getting System ${systemSlug}`);
 
-  const { data }: { data: System } = await res.json();
+  const { data }: { data: SystemType } = await res.json();
   return data;
 }
 
-export async function getSystems(): Promise<System> {
+export async function getSystems(): Promise<SystemType> {
   const res = await fetch(`${API_URL}/systems/`);
   if (!res.ok) throw Error(`Failed getting Systems`);
 
-  const { data }: { data: System } = await res.json();
+  const { data }: { data: SystemType } = await res.json();
   return data;
 }
 
@@ -26,10 +26,10 @@ export async function createEditSystem(
     version?: string;
     introduction?: string;
   },
-  id: string,
-): Promise<System> {
+  systemSlug?: string,
+): Promise<SystemType> {
   let res;
-  if (!id) {
+  if (!systemSlug) {
     res = await fetch(`${API_URL}/systems/`, {
       method: "POST",
       headers: {
@@ -39,8 +39,8 @@ export async function createEditSystem(
     });
   }
 
-  if (id) {
-    res = await fetch(`${API_URL}/systems/${id}`, {
+  if (systemSlug) {
+    res = await fetch(`${API_URL}/systems/${systemSlug}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newSystem),
@@ -54,7 +54,7 @@ export async function createEditSystem(
     );
   }
 
-  const { data }: { data: System } = await res.json();
+  const { data }: { data: SystemType } = await res.json();
   return data;
 }
 
@@ -66,7 +66,7 @@ export async function createEditSystem(
 //   name: string;
 //   version?: string;
 //   introduction?: string;
-// }): Promise<System> {
+// }): Promise<SystemType> {
 //   const res = await fetch(`${API_URL}/systems/:id`, {
 //     method: "POST",
 //     headers: {
@@ -86,9 +86,9 @@ export async function createEditSystem(
 //   return data;
 // }
 
-export async function getRoles(systemId: string): Promise<unknown> {
-  const res = await fetch(`${API_URL}/systems/${systemId}/roles`);
-  if (!res.ok) throw Error(`Failed getting Roles for System #${systemId}`);
+export async function getRoles(systemSlug: string): Promise<unknown> {
+  const res = await fetch(`${API_URL}/systems/${systemSlug}/roles`);
+  if (!res.ok) throw Error(`Failed getting Roles for System #${systemSlug}`);
 
   const { data }: { data: Role[] } = await res.json();
   return data;
@@ -100,28 +100,38 @@ export interface RoleWithBreadcrumbs {
 }
 
 export async function getRole(
-  systemId: string,
-  roleId: string,
+  systemSlug: string,
+  sectionSlug: string,
 ): Promise<RoleWithBreadcrumbs> {
-  const res = await fetch(`${API_URL}/systems/${systemId}/roles/${roleId}`);
-  if (!res.ok) throw new Error(`Failed getting Role #${roleId}`);
+  console.log(systemSlug, sectionSlug);
+
+  const res = await fetch(
+    `${API_URL}/systems/${systemSlug}/roles/${sectionSlug}`,
+  );
+
+  if (!res.ok) throw new Error(`Failed getting Role #${sectionSlug}`);
 
   const { data }: { data: RoleWithBreadcrumbs } = await res.json();
   return data;
 }
 
-export async function getRace(systemId: string, raceId: string): Promise<Race> {
-  const res = await fetch(`${API_URL}/systems/${systemId}/races/${raceId}`);
-  if (!res.ok) throw Error(`Failed getting Race #${raceId}`);
+export async function getRace(
+  systemSlug: string,
+  sectionSlug: string,
+): Promise<Race> {
+  const res = await fetch(
+    `${API_URL}/systems/${systemSlug}/races/${sectionSlug}`,
+  );
+  if (!res.ok) throw Error(`Failed getting Race #${sectionSlug}`);
 
   const { data }: { data: Race } = await res.json();
   return data;
 }
 
-export async function getNavigation(systemId: string): Promise<System> {
-  const res = await fetch(`${API_URL}/systems/${systemId}/navigation`);
-  if (!res.ok) throw Error(`Failed getting System #${systemId}`);
+export async function getNavigation(systemSlug: string): Promise<SystemType> {
+  const res = await fetch(`${API_URL}/systems/${systemSlug}/navigation`);
+  if (!res.ok) throw Error(`Failed getting System ${systemSlug}`);
 
-  const { data }: { data: System } = await res.json();
+  const { data }: { data: SystemType } = await res.json();
   return data;
 }

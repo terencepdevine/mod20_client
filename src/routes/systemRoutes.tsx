@@ -1,17 +1,16 @@
 import { RouteObject } from "react-router-dom";
 
-import SystemLayout from "../components/layout/SystemLayout";
+import SystemLayout from "../components/Layout/SystemLayout";
 import System from "../pages/System";
 import Systems from "../pages/Systems";
-import Role from "../pages/Role";
+import Role from "../pages/Role/Role";
 import Race from "../pages/Race";
 
 import { systemsLoader } from "../loaders/systemsLoader";
-import { systemLoader } from "../loaders/systemLoader";
-import { systemNavigationLoader } from "../loaders/systemNavigationLoader";
+import Roles from "../pages/Roles";
+
 import { roleLoader } from "../loaders/roleLoader";
 import { raceLoader } from "../loaders/raceLoader";
-import Roles from "../pages/Roles";
 import { rolesLoader } from "../loaders/rolesLoader";
 
 const systemRoutes: RouteObject[] = [
@@ -21,26 +20,27 @@ const systemRoutes: RouteObject[] = [
     loader: systemsLoader,
   },
   {
+    path: "/systems/:systemSlug",
     element: <SystemLayout />,
-    loader: systemNavigationLoader,
+    // loader: systemNavigationLoader,
     children: [
       {
-        path: "/systems/:systemId",
+        path: "",
         element: <System />,
-        loader: systemLoader,
+        // loader: systemLoader,
       },
       {
-        path: "/systems/:systemId/roles",
+        path: "roles",
         element: <Roles />,
         loader: rolesLoader,
       },
       {
-        path: "/systems/:systemId/roles/:roleId",
+        path: "roles/:sectionSlug",
         element: <Role />,
         loader: roleLoader,
       },
       {
-        path: "/systems/:systemId/races/:raceId",
+        path: "races/:sectionSlug",
         element: <Race />,
         loader: raceLoader,
       },

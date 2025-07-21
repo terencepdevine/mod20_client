@@ -1,25 +1,22 @@
 import { LoaderFunctionArgs } from "react-router-dom";
 import { getNavigation } from "../services/apiSystem";
 import { queryClient } from "../query/queryClient";
-import { SystemNavigationType } from "../types/SystemNavigation";
 
-export const systemNavigationQuery = (systemid: string) => ({
-  queryKey: ["systemNavigation", systemid],
-  queryFn: async (): Promise<SystemNavigationType> => {
-    return await getNavigation(systemid);
-  },
+export const systemNavigationQuery = (systemSlug: string) => ({
+  queryKey: ["systemNavigation", systemSlug],
+  queryFn: async () => getNavigation(systemSlug),
 });
 
 export const systemNavigationLoader = async ({
   params,
 }: LoaderFunctionArgs) => {
-  const systemId = params.systemId;
+  const { systemSlug } = params;
 
-  if (!systemId) {
-    throw new Error("Missing required parameter: systemId");
+  if (!systemSlug) {
+    throw new Error("Missing required parameter: systemSlug");
   }
 
-  const query = systemNavigationQuery(systemId);
+  const query = systemNavigationQuery(systemSlug);
 
   return (
     queryClient.getQueryData(query.queryKey) ??

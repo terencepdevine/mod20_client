@@ -30,7 +30,7 @@ const NavigationItem: React.FC<NavigationItemProps> = ({ name, to }) => {
       <NavLink
         to={to}
         className={({ isActive }) =>
-          `block rounded px-2 py-1 font-bold hover:bg-gray-925 lg:p-0 lg:text-lg lg:hover:bg-transparent ${
+          `hover:bg-gray-925 block rounded px-2 py-1 font-medium lg:p-0 lg:text-lg lg:hover:bg-transparent ${
             isActive ? "text-sky-500" : "text-gray-300"
           }`
         }

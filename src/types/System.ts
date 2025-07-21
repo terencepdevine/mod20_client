@@ -1,6 +1,6 @@
 import { SystemCharacter } from "./SystemCharacter";
 
-export interface System {
+export interface SystemType {
   // 1. Introduction
   id: string;
   name: string;

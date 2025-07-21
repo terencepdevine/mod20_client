@@ -2,20 +2,20 @@ import { LoaderFunctionArgs } from "react-router-dom";
 import { getRole } from "../services/apiSystem";
 import { queryClient } from "../query/queryClient";
 
-export const roleQuery = (systemId: string, roleId: string) => ({
-  queryKey: ["role", systemId, roleId],
-  queryFn: async () => getRole(systemId, roleId),
+export const roleQuery = (systemSlug: string, sectionSlug: string) => ({
+  queryKey: ["role", systemSlug, sectionSlug],
+  queryFn: async () => getRole(systemSlug, sectionSlug),
 });
 
 export const roleLoader = async ({ params }: LoaderFunctionArgs) => {
-  const systemId = params.systemId;
-  const roleId = params.roleId;
+  const systemSlug = params.systemSlug;
+  const sectionSlug = params.sectionSlug;
 
-  if (!systemId || !roleId) {
-    throw new Error("Missing required parameters: systemId or roleId");
+  if (!systemSlug || !sectionSlug) {
+    throw new Error("Missing required parameters: systemSlug or sectionSlug");
   }
 
-  const query = roleQuery(systemId, roleId);
+  const query = roleQuery(systemSlug, sectionSlug);
 
   return (
     queryClient.getQueryData(query.queryKey) ??

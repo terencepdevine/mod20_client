@@ -1,5 +1,5 @@
-import { useLoaderData, useParams } from "react-router-dom";
-import { Role } from "../types/Role";
+import { useParams } from "react-router-dom";
+// import { Role } from "../types/Role";
 
 const Roles: React.FC = () => {
   const { systemId } = useParams();
@@ -15,8 +15,7 @@ const Roles: React.FC = () => {
 };
 
 const RolesContent: React.FC = () => {
-  const roles = useLoaderData() as Role[];
-  console.log(roles);
+  // const roles = useLoaderData() as Role[];
 
   return (
     <div>

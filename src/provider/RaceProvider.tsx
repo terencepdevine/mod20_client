@@ -1,19 +1,18 @@
 import { createContext, ReactNode } from "react";
-import { Race } from "../types/Race";
-import { ContextType } from "../types/Context";
+import { ContextType, RaceType } from "@mod20/types";
 import { useQuery } from "@tanstack/react-query";
 import { raceQuery } from "../loaders/raceLoader";
 
-export const RaceContext = createContext<ContextType<Race> | undefined>(
+export const RaceContext = createContext<ContextType<RaceType> | undefined>(
   undefined,
 );
 
 export const RaceProvider: React.FC<{
-  systemId: string;
-  raceId: string;
+  systemSlug: string;
+  sectionSlug: string;
   children: ReactNode;
-}> = ({ systemId, raceId, children }) => {
-  const query = raceQuery(systemId, raceId);
+}> = ({ systemSlug, sectionSlug, children }) => {
+  const query = raceQuery(systemSlug, sectionSlug);
   const { data, isPending, isError, error } = useQuery(query);
 
   return (

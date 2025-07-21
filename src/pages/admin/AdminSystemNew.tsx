@@ -1,13 +1,25 @@
-import { useForm } from "react-hook-form";
+import { useForm, SubmitHandler } from "react-hook-form";
 import Form from "../../components/forms/Form";
-import Input from "../../components/forms/Input";
-import TextEditor from "../../components/forms/TextEditor";
+// import Input from "../../components/forms/Input";
+// import TextEditor from "../../components/forms/TextEditor";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createEditSystem } from "../../services/apiSystem";
 import { toast } from "react-toastify";
 
+type Inputs = {
+  name: string;
+  introduction?: string;
+};
+
 const AdminSystemNew: React.FC = () => {
-  const { register, handleSubmit, control, reset } = useForm();
+  const {
+    register,
+    handleSubmit,
+    // watch,
+    formState: { errors },
+    // control,
+    reset,
+  } = useForm<Inputs>();
   const queryClient = useQueryClient();
   const { mutate, isPending } = useMutation({
     mutationFn: createEditSystem,
@@ -21,9 +33,10 @@ const AdminSystemNew: React.FC = () => {
     onError: (err) => alert(err.message),
   });
 
-  function onSubmit(data) {
+  const onSubmit: SubmitHandler<Inputs> = (data) => {
+    console.log(data);
     mutate(data);
-  }
+  };
 
   const handleCancel = () => {
     toast("Message", {
@@ -32,9 +45,22 @@ const AdminSystemNew: React.FC = () => {
     });
   };
 
+  if (isPending) return <h1>Loading...</h1>;
+
   return (
     <>
       <Form onSubmit={handleSubmit(onSubmit)}>
+        <input defaultValue="Name" {...register("name")} />
+        {errors.name && <span>This field is required</span>}
+        <input defaultValue="Introduction" {...register("introduction")} />
+        <div>
+          <button type="reset" onClick={() => handleCancel}>
+            Cancel
+          </button>
+          <button type="submit">Submit</button>
+        </div>
+      </Form>
+      {/* <Form onSubmit={handleSubmit(onSubmit)}>
         <Input
           label="System Name"
           type="text"
@@ -54,7 +80,7 @@ const AdminSystemNew: React.FC = () => {
           Cancel
         </button>
         <button disabled={isPending}>Submit</button>
-      </Form>
+      </Form> */}
     </>
   );
 };

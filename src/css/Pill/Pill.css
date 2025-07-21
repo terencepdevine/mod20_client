@@ -1,0 +1,13 @@
+.pill-wrap {
+  display: flex;
+  gap: var(--spacing-2);
+}
+
+.pill {
+  font-size: var(--font-size-sm);
+  font-style: italic;
+  background: var(--color-neutral-975);
+  color: var(--color-neutral-400);
+  padding: var(--spacing-1) var(--spacing-3);
+  border-radius: var(--border-radius-sm);
+}

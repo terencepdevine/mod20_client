@@ -1,0 +1,67 @@
+.app-layout {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  grid-template-rows: auto 1fr;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.header {
+  grid-column: span 2;
+}
+
+.main {
+  display: flex;
+  flex: 1;
+}
+
+.main__sidebar {
+  display: flex;
+  flex-direction: column;
+  background: var(--color-neutral-925);
+  padding: var(--spacing-2);
+}
+
+.nav-sidebar {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.content-wrap {
+  overflow-y: auto;
+}
+
+.content {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  padding: var(--spacing-6);
+  gap: var(--spacing-6);
+}
+
+.content__sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-6);
+}
+
+.main__sidebar {
+  display: flex;
+  gap: var(--spacing-2);
+  overflow: hidden;
+}
+
+.main__sidebar h1 {
+  padding: var(--spacing-2);
+  background: var(--color-neutral-900);
+  border-radius: var(--border-radius-base);
+}
+
+.main__sidebar-content {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.nav-page-wrap {
+  position: sticky;
+  top: var(--spacing-6);
+}

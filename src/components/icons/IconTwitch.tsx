@@ -1,12 +1,6 @@
 import React from "react";
 
-type IconTwitchProps = {
-  className?: string;
-};
-
-const IconTwitch: React.FC<IconTwitchProps> = ({
-  className = "fill-gray-300",
-}) => {
+const IconTwitch: React.FC = () => {
   return (
     <svg
       width="28"
@@ -14,7 +8,6 @@ const IconTwitch: React.FC<IconTwitchProps> = ({
       viewBox="0 0 28 20"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className={className}
     >
       <path
         fillRule="evenodd"

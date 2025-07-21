@@ -2,20 +2,20 @@ import { LoaderFunctionArgs } from "react-router-dom";
 import { getRace } from "../services/apiSystem";
 import { queryClient } from "../query/queryClient";
 
-export const raceQuery = (systemId: string, raceId: string) => ({
-  queryKey: ["race", systemId, raceId],
-  queryFn: async () => getRace(systemId, raceId),
+export const raceQuery = (systemSlug: string, sectionSlug: string) => ({
+  queryKey: ["race", systemSlug, sectionSlug],
+  queryFn: async () => getRace(systemSlug, sectionSlug),
 });
 
 export const raceLoader = async ({ params }: LoaderFunctionArgs) => {
-  const systemId = params.systemId;
-  const raceId = params.raceId;
+  const systemSlug = params.systemSlug;
+  const sectionSlug = params.sectionSlug;
 
-  if (!systemId || !raceId) {
-    throw new Error("Missing required parameters: systemId or raceId");
+  if (!systemSlug || !sectionSlug) {
+    throw new Error("Missing required parameters: systemSlug or sectionSlug");
   }
 
-  const query = raceQuery(systemId, raceId);
+  const query = raceQuery(systemSlug, sectionSlug);
 
   return (
     queryClient.getQueryData(query.queryKey) ??

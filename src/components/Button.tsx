@@ -2,16 +2,42 @@ import { Link } from "react-router-dom";
 
 type ButtonProps = {
   children: React.ReactNode;
+  disabled?: boolean;
   icon?: React.ElementType;
+  variant?: "primary" | "full";
+  type?: "link" | "submit";
+  to?: string;
   onClick?: () => void;
 };
 
-const Button: React.FC<ButtonProps> = ({ children, icon: Icon, onClick }) => {
+const Button: React.FC<ButtonProps> = ({
+  children,
+  disabled = false,
+  icon: Icon,
+  onClick,
+  type = "link",
+  variant,
+  to = "/",
+}) => {
+  if (type === "submit") {
+    return (
+      <button
+        disabled={disabled}
+        type="submit"
+        onClick={onClick}
+        className={`button ${variant === "full" && "button--full"}`}
+      >
+        {Icon && <Icon className="h-6 w-6 fill-sky-500" />}
+        {children}
+      </button>
+    );
+  }
+
   return (
     <Link
-      to="/"
+      to={to}
       onClick={onClick}
-      className="flex items-center gap-4 rounded-lg bg-gray-900 px-4 py-2 font-bold hover:border-gray-700"
+      className={`button ${variant === "full" && "button--full"}`}
     >
       {Icon && <Icon className="h-6 w-6 fill-sky-500" />}
       {children}

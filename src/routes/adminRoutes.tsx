@@ -1,10 +1,11 @@
 import { RouteObject } from "react-router-dom";
 import { systemsLoader } from "../loaders/systemsLoader";
 
-import AdminLayout from "../components/layout/AdminLayout";
 import AdminSystems from "../pages/admin/AdminSystems";
 import AdminSystem from "../pages/admin/AdminSystem";
 import AdminSystemNew from "../pages/admin/AdminSystemNew";
+import { systemLoader } from "../loaders/systemLoader";
+import AdminLayout from "../components/AdminLayout/AdminLayout";
 
 const adminRoutes: RouteObject[] = [
   {
@@ -17,8 +18,9 @@ const adminRoutes: RouteObject[] = [
         loader: systemsLoader,
       },
       {
-        path: "systems/:systemId",
+        path: "systems/:systemSlug",
         element: <AdminSystem />,
+        loader: systemLoader,
       },
       {
         path: "systems/new",

@@ -1,26 +1,27 @@
 import { createContext, ReactNode } from "react";
+
 import { getSystem } from "../services/apiSystem";
 import { useQuery } from "@tanstack/react-query";
-import { ContextType } from "../types/Context";
-import { System } from "../types/System";
 
-export const SystemContext = createContext<ContextType<System> | undefined>(
+import { ContextType, SystemType } from "@mod20/types";
+
+export const SystemContext = createContext<ContextType<SystemType> | undefined>(
   undefined,
 );
 
 export const SystemProvider: React.FC<{
-  systemId: string;
+  systemSlug: string;
   children: ReactNode;
-}> = ({ systemId, children }) => {
+}> = ({ systemSlug, children }) => {
   const { data, isPending, isError, error } = useQuery({
-    queryKey: ["system", systemId],
-    queryFn: () => getSystem(systemId),
+    queryKey: ["system", systemSlug],
+    queryFn: () => getSystem(systemSlug),
   });
 
   return (
     <SystemContext.Provider
       value={{
-        data: data || null, // Handle case where data is undefined
+        data: data || null,
         isPending,
         isError,
         error: error as Error | null,
