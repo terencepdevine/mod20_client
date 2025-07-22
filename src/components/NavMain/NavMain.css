@@ -1,0 +1,10 @@
+.nav-main__item a {
+  font-family: var(--font-family-header);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-lg);
+  transition: 0.2s ease all;
+
+  &:hover {
+    color: var(--color-primary-300);
+  }
+}

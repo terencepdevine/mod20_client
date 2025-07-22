@@ -6,8 +6,8 @@
 .pill {
   font-size: var(--font-size-sm);
   font-style: italic;
-  background: var(--color-neutral-975);
-  color: var(--color-neutral-400);
+  background: var(--color-gray-950);
+  color: var(--color-gray-400);
   padding: var(--spacing-1) var(--spacing-3);
   border-radius: var(--border-radius-sm);
 }

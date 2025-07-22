@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 
-import "../../css/Pill/Pill.css";
+import "./Pill.css";
 
 interface PillProps {
   children: ReactNode;

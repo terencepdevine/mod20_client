@@ -11,7 +11,7 @@
 }
 
 .nav-sidebar__item--active {
-  background: var(--color-neutral-900);
+  background: var(--color-gray-800);
 
   .nav-sidebar__link-arrow {
     transform: rotate(180deg);
@@ -56,13 +56,13 @@
 
   &:hover {
     color: var(--color-primary-400);
-    background: var(--color-neutral-925);
+    background: var(--color-gray-900);
   }
 }
 
 .nav-sidebar__sub-item--active {
   .nav-sidebar__sub-link {
-    background: var(--color-neutral-950);
+    background: var(--color-gray-950);
     color: var(--color-primary-400);
   }
 }

@@ -4,11 +4,11 @@
 }
 
 .input {
-  background-color: var(--color-neutral-925);
+  background-color: var(--color-gray-900);
   border: none;
   border-radius: var(--border-radius-base);
   padding: var(--spacing-4);
-  color: var(--color-neutral-100);
+  color: var(--color-gray-100);
 
   &.input--large {
     font-size: var(--font-size-lg);

@@ -1,0 +1,16 @@
+.nav-social__list {
+  display: flex;
+  gap: var(--spacing-6);
+}
+
+.nav-social__item {
+  svg {
+    display: block;
+    fill: var(--color-primary-50);
+    transition: 0.2s ease all;
+  }
+
+  &:hover svg {
+    fill: var(--color-primary-300);
+  }
+}

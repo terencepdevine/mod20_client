@@ -5,6 +5,8 @@ import IconTwitch from "../icons/IconTwitch";
 import IconDiscord from "../icons/IconDiscord";
 import IconInstagram from "../icons/IconInstagram";
 
+import "./NavSocial.css";
+
 const NavSocial = () => {
   return (
     <nav className="nav-social">

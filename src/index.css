@@ -4,7 +4,7 @@
 @import "./css/base/typography.css";
 
 .bg-page {
-  background: var(--color-neutral-975);
+  background: var(--color-gray-950);
 }
 
 .fill-sky-500 {

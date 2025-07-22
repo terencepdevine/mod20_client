@@ -3,7 +3,7 @@ import IconSearch from "../icons/IconSearch";
 import Pill from "../Pill/Pill";
 import PillWrap from "../Pill/PillWrap";
 
-import "../../css/Search/Search.css";
+import "./Search.css";
 
 interface SearchProps {
   placeholder?: string;

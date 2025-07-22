@@ -2,9 +2,10 @@ import { Link } from "react-router-dom";
 
 import Search from "../Search/Search";
 import NavSocial from "../NavSocial/NavSocial";
+import NavMain from "../NavMain/NavMain";
 import IconD20 from "../icons/IconD20";
 
-import "../../css/Header/Header.css";
+import "./Header.css";
 import NavUser from "../NavUser/NavUser";
 
 const Header: React.FC = () => {
@@ -16,13 +17,7 @@ const Header: React.FC = () => {
             <IconD20 className="logo__icon" />
             <h1 className="logo__text">MOD20</h1>
           </Link>
-          <nav className="nav-main">
-            <ul className="nav-main__list">
-              <li className="nav-main__item">
-                <Link to="/systems">Systems</Link>
-              </li>
-            </ul>
-          </nav>
+          <NavMain />
           <Search />
         </div>
         <div className="header__secondary">

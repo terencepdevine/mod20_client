@@ -1,6 +1,4 @@
-import { Race } from "../types/Race";
-import { Role } from "../types/Role";
-import { SystemType } from "../types/System";
+import { RaceType, RoleType, SystemType } from "@mod20/types";
 
 const API_URL = "http://127.0.0.1:3000/api/v1";
 
@@ -12,11 +10,11 @@ export async function getSystem(systemSlug: string): Promise<SystemType> {
   return data;
 }
 
-export async function getSystems(): Promise<SystemType> {
+export async function getSystems(): Promise<SystemType[]> {
   const res = await fetch(`${API_URL}/systems/`);
   if (!res.ok) throw Error(`Failed getting Systems`);
 
-  const { data }: { data: SystemType } = await res.json();
+  const { data }: { data: SystemType[] } = await res.json();
   return data;
 }
 
@@ -28,7 +26,8 @@ export async function createEditSystem(
   },
   systemSlug?: string,
 ): Promise<SystemType> {
-  let res;
+  let res: Response;
+  
   if (!systemSlug) {
     res = await fetch(`${API_URL}/systems/`, {
       method: "POST",
@@ -37,9 +36,7 @@ export async function createEditSystem(
       },
       body: JSON.stringify(newSystem),
     });
-  }
-
-  if (systemSlug) {
+  } else {
     res = await fetch(`${API_URL}/systems/${systemSlug}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
@@ -90,13 +87,13 @@ export async function getRoles(systemSlug: string): Promise<unknown> {
   const res = await fetch(`${API_URL}/systems/${systemSlug}/roles`);
   if (!res.ok) throw Error(`Failed getting Roles for System #${systemSlug}`);
 
-  const { data }: { data: Role[] } = await res.json();
+  const { data }: { data: RoleType[] } = await res.json();
   return data;
 }
 
 export interface RoleWithBreadcrumbs {
   breadcrumbs: Array<{ name: string; slug: string }>;
-  role: Role;
+  role: RoleType;
 }
 
 export async function getRole(
@@ -118,13 +115,13 @@ export async function getRole(
 export async function getRace(
   systemSlug: string,
   sectionSlug: string,
-): Promise<Race> {
+): Promise<RaceType> {
   const res = await fetch(
     `${API_URL}/systems/${systemSlug}/races/${sectionSlug}`,
   );
   if (!res.ok) throw Error(`Failed getting Race #${sectionSlug}`);
 
-  const { data }: { data: Race } = await res.json();
+  const { data }: { data: RaceType } = await res.json();
   return data;
 }
 
