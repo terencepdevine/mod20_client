@@ -1,4 +1,4 @@
-import { RaceType, RoleType, SystemType } from "@mod20/types";
+import { RaceType, RoleType, SystemType, SystemNavigationType } from "@mod20/types";
 
 const API_URL = "http://127.0.0.1:3000/api/v1";
 
@@ -125,10 +125,10 @@ export async function getRace(
   return data;
 }
 
-export async function getNavigation(systemSlug: string): Promise<SystemType> {
+export async function getNavigation(systemSlug: string): Promise<SystemNavigationType> {
   const res = await fetch(`${API_URL}/systems/${systemSlug}/navigation`);
   if (!res.ok) throw Error(`Failed getting System ${systemSlug}`);
 
-  const { data }: { data: SystemType } = await res.json();
+  const { data }: { data: SystemNavigationType } = await res.json();
   return data;
 }
