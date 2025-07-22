@@ -20,7 +20,7 @@ const NavUser = () => {
         <div className="nav-user__list-wrap">
           <ul className="nav-user__list">
             <li className="nav-user__item">
-              <Link to="/" className="nav-user__link">
+              <Link to="/account" className="nav-user__link">
                 User Profile
               </Link>
             </li>
