@@ -6,7 +6,7 @@ export interface ImageFieldConfig {
   description: string;
   isMultiple: boolean;
   maxCount?: number;
-  fieldKey: string; // Generic field key (e.g., 'imageIds', 'backgroundImageId', 'heroImageId')
+  fieldKey: string; // Generic field key (e.g., 'images', 'backgroundImageId', 'heroImageId')
 }
 
 // Generic interface for ordered images (not specific to Role)
