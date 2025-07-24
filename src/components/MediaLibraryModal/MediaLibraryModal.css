@@ -1,0 +1,291 @@
+/* Modal styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: var(--spacing-4);
+}
+
+.modal-content {
+  background: var(--bg-card);
+  border-radius: var(--border-radius-lg);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  max-width: 1200px;
+  max-height: 90vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.modal-header {
+  padding: var(--spacing-6);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--bg-primary);
+}
+
+.modal-header h2 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: var(--font-size-xl);
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: var(--font-size-2xl);
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: var(--spacing-2);
+  border-radius: var(--border-radius-base);
+  transition: color 0.2s ease, background 0.2s ease;
+}
+
+.modal-close:hover {
+  color: var(--text-primary);
+  background: var(--bg-hover);
+}
+
+.modal-body {
+  padding: var(--spacing-6);
+  overflow-y: auto;
+  flex: 1;
+}
+
+.modal-footer {
+  padding: var(--spacing-6);
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-3);
+  background: var(--bg-primary);
+}
+
+/* Modal media library grid */
+.modal-media-library-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--spacing-4);
+}
+
+.modal-media-library-item {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: var(--border-radius-base);
+  overflow: hidden;
+  border: 2px solid var(--border-color);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+  cursor: pointer;
+}
+
+.modal-media-library-item:hover {
+  transform: scale(1.02);
+  border-color: var(--color-primary-300);
+}
+
+.modal-media-library-item.in-field {
+  border-color: var(--color-primary-600);
+  background: rgba(var(--color-primary-600-rgb), 0.1);
+}
+
+.modal-media-library-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.modal-media-library-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+  padding: var(--spacing-3);
+  color: white;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.modal-media-library-item:hover .modal-media-library-overlay {
+  opacity: 1;
+}
+
+.modal-media-library-overlay .image-name {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  margin-bottom: var(--spacing-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.modal-media-library-buttons {
+  display: flex;
+  gap: var(--spacing-2);
+  flex-wrap: wrap;
+}
+
+.add-btn, .remove-btn, .delete-btn {
+  padding: var(--spacing-1) var(--spacing-2);
+  border: none;
+  border-radius: var(--border-radius-base);
+  cursor: pointer;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  transition: background 0.2s ease;
+}
+
+.add-btn {
+  background: var(--color-primary-600);
+  color: white;
+}
+
+.add-btn:hover:not(:disabled) {
+  background: var(--color-primary-700);
+}
+
+.add-btn:disabled {
+  background: var(--color-gray-400);
+  cursor: not-allowed;
+}
+
+.remove-btn {
+  background: rgba(220, 38, 38, 0.9);
+  color: white;
+}
+
+.remove-btn:hover {
+  background: rgba(220, 38, 38, 1);
+}
+
+.delete-btn {
+  background: rgba(153, 27, 27, 0.9);
+  color: white;
+}
+
+.delete-btn:hover {
+  background: rgba(153, 27, 27, 1);
+}
+
+.error-message {
+  padding: var(--spacing-4);
+  background: rgba(220, 38, 38, 0.1);
+  border: 1px solid rgba(220, 38, 38, 0.3);
+  border-radius: var(--border-radius-base);
+  color: #dc2626;
+}
+
+.error-message p {
+  margin: 0 0 var(--spacing-2) 0;
+}
+
+.error-message p:last-child {
+  margin-bottom: 0;
+}
+
+.no-images-message {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: var(--text-secondary);
+  padding: var(--spacing-6);
+}
+
+/* Upload Section Styles */
+.modal-upload-section {
+  margin-bottom: var(--spacing-6);
+  padding-bottom: var(--spacing-4);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.modal-upload-section h3 {
+  margin: 0 0 var(--spacing-4) 0;
+  color: var(--text-primary);
+  font-size: var(--font-size-lg);
+}
+
+.modal-media-library-section h3 {
+  margin: 0 0 var(--spacing-4) 0;
+  color: var(--text-primary);
+  font-size: var(--font-size-lg);
+}
+
+.upload-field-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.upload-input {
+  padding: var(--spacing-3);
+  border: 2px dashed var(--border-color);
+  border-radius: var(--border-radius-base);
+  background: var(--bg-secondary);
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.upload-input:hover:not(:disabled) {
+  border-color: var(--color-primary-400);
+  background: var(--bg-hover);
+}
+
+.upload-input:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.image-previews {
+  background: var(--bg-secondary);
+  border-radius: var(--border-radius-base);
+  padding: var(--spacing-4);
+}
+
+.image-previews h5 {
+  margin: 0 0 var(--spacing-3) 0;
+  color: var(--text-primary);
+  font-size: var(--font-size-base);
+}
+
+.preview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: var(--spacing-3);
+}
+
+.preview-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.preview-image {
+  width: 100%;
+  height: 80px;
+  object-fit: cover;
+  border-radius: var(--border-radius-base);
+  border: 1px solid var(--border-color);
+}
+
+.preview-filename {
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+  text-align: center;
+  word-break: break-word;
+  max-width: 100%;
+}
+
+.upload-btn {
+  align-self: flex-start;
+}

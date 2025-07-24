@@ -5,9 +5,10 @@ type ButtonProps = {
   disabled?: boolean;
   icon?: React.ElementType;
   variant?: "primary" | "full";
-  type?: "link" | "submit";
+  type?: "link" | "submit" | "button";
   to?: string;
   onClick?: () => void;
+  className?: string;
 };
 
 const Button: React.FC<ButtonProps> = ({
@@ -18,14 +19,15 @@ const Button: React.FC<ButtonProps> = ({
   type = "link",
   variant,
   to = "/",
+  className,
 }) => {
-  if (type === "submit") {
+  if (type === "submit" || type === "button") {
     return (
       <button
         disabled={disabled}
-        type="submit"
+        type={type}
         onClick={onClick}
-        className={`button ${variant === "full" && "button--full"}`}
+        className={`button ${variant === "full" ? "button--full" : ""} ${className || ""}`}
       >
         {Icon && <Icon className="h-6 w-6 fill-sky-500" />}
         {children}
@@ -37,7 +39,7 @@ const Button: React.FC<ButtonProps> = ({
     <Link
       to={to}
       onClick={onClick}
-      className={`button ${variant === "full" && "button--full"}`}
+      className={`button ${variant === "full" ? "button--full" : ""} ${className || ""}`}
     >
       {Icon && <Icon className="h-6 w-6 fill-sky-500" />}
       {children}

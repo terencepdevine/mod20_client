@@ -13,4 +13,6 @@ export interface Role {
   weaponTaxonomies?: [WeaponTaxonomy];
   skills?: [Skill];
   tools?: [ToolTaxonomy];
+  images?: Array<{ imageId: string; orderby: number }>;
+  backgroundImageId?: string;
 }

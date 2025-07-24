@@ -1,9 +1,12 @@
 import { RoleProvider } from "../../provider/RoleProvider";
 import Hero from "../../components/Hero/Hero";
+import ImageGallery from "../../components/ImageGallery/ImageGallery";
 import { useRole } from "../../hooks/useProvider";
 import { Link, useParams } from "react-router-dom";
-import { RoleType } from "@mod20/types";
+import { RoleType, ImageType } from "@mod20/types";
 import { joinWithComma } from "../../utils/joinWithComma";
+import { useQuery } from "@tanstack/react-query";
+import { getImages } from "../../services/apiSystem";
 import "./Role.css";
 
 const Role: React.FC = () => {
@@ -23,6 +26,12 @@ const RoleContent: React.FC = () => {
   const { data, isPending, isError, error } = useRole();
   const role = data.role as RoleType;
 
+  // Query for media library images to resolve Image IDs
+  const { data: allImages = [] } = useQuery({
+    queryKey: ["images"],
+    queryFn: getImages,
+  });
+
   if (isPending) return <h1>Loading...</h1>;
   if (isError && error !== null)
     return <h1>Error: {error.message || "Something went wrong"}</h1>;
@@ -32,18 +41,30 @@ const RoleContent: React.FC = () => {
     return <div>Error: Role data is missing.</div>;
   }
 
+  // Helper function to get role images from media library
+  const getRoleImages = (): ImageType[] => {
+    if (!role?.images || !allImages.length) return [];
+    const orderedImages = role.images.sort((a, b) => a.orderby - b.orderby);
+    return orderedImages.map(item => 
+      allImages.find(img => img.id === item.imageId)
+    ).filter(Boolean) as ImageType[];
+  };
+
   return (
     <div className="content-wrap">
       <Hero name={role.name} />
       <div className="content">
         <div className="content__main wysiwyg">
-          {role.photo && (
-            <img
-              src={`http://localhost:3000/public/img/roles/${role.photo}`}
-              alt=""
-              className="full-width"
-            />
-          )}
+          {(() => {
+            const roleImages = getRoleImages();
+            return roleImages.length > 0 && (
+              <ImageGallery
+                images={roleImages.map(img => `http://localhost:3000${img.filePath || `/public/img/media/${img.filename}`}`)}
+                basePath=""
+                alt={`${role.name} images`}
+              />
+            );
+          })()}
 
           {role.introduction && (
             <div

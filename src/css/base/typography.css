@@ -1,7 +1,7 @@
 body {
   font-family: var(--font-family-body);
   line-height: var(--line-height-body);
-  color: var(--color-primary-50);
+  color: var(--text-primary);
 }
 
 p {
@@ -50,6 +50,7 @@ h6 {
   font-family: var(--font-family-header);
   font-weight: var(--font-weight-medium);
   line-height: var(--line-height-header);
+  color: var(--text-primary);
   margin: 0;
   padding: 0;
 }
@@ -67,6 +68,7 @@ h6 {
 
   p {
     font-size: var(--font-size-base);
+    color: var(--text-primary);
   }
 
   .text-lg {
@@ -77,6 +79,7 @@ h6 {
     p {
       font-size: var(--font-size-lg);
       line-height: var(--line-height-body);
+      color: var(--text-primary);
     }
   }
 }

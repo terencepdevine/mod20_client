@@ -1,0 +1,120 @@
+.image-upload {
+  margin-bottom: var(--spacing-6);
+}
+
+.image-upload-header {
+  margin-bottom: var(--spacing-4);
+}
+
+.image-upload-header h3 {
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.image-upload-field {
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-base);
+  padding: var(--spacing-4);
+  background: var(--bg-card);
+}
+
+.upload-field-header {
+  margin-bottom: var(--spacing-3);
+}
+
+.upload-label {
+  font-weight: var(--font-weight-medium);
+  color: var(--text-primary);
+  font-size: var(--font-size-sm);
+}
+
+.upload-field-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+
+.upload-input {
+  padding: var(--spacing-3);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-base);
+  background: var(--bg-input);
+  color: var(--text-primary);
+  font-family: inherit;
+}
+
+.upload-input:focus {
+  outline: none;
+  border-color: var(--color-primary-500);
+}
+
+.upload-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.image-previews {
+  margin: var(--spacing-4) 0;
+}
+
+.image-previews h5 {
+  margin-bottom: var(--spacing-3);
+  color: var(--text-primary);
+  font-weight: var(--font-weight-semibold);
+}
+
+.preview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: var(--spacing-3);
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-base);
+  padding: var(--spacing-3);
+  background: var(--surface-secondary);
+}
+
+.preview-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.preview-item .preview-image {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: var(--border-radius-sm);
+  border: 2px solid var(--border-color);
+  margin-bottom: var(--spacing-2);
+}
+
+.preview-filename {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  word-break: break-all;
+  line-height: 1.2;
+  max-width: 100px;
+}
+
+.upload-btn {
+  align-self: flex-start;
+  background: var(--color-primary-600);
+  color: white;
+  border: none;
+  padding: var(--spacing-2) var(--spacing-4);
+  border-radius: var(--border-radius-base);
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.upload-btn:hover:not(:disabled) {
+  background: var(--color-primary-700);
+}
+
+.upload-btn:disabled {
+  background: var(--color-gray-400);
+  cursor: not-allowed;
+}

@@ -1,0 +1,753 @@
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { useMutation } from "@tanstack/react-query";
+import { queryClient } from "../../query/queryClient";
+import { toast } from "react-toastify";
+
+import { updateRole } from "../../services/apiSystem";
+
+import { RoleProvider } from "../../provider/RoleProvider";
+import { useRole } from "../../hooks/useProvider";
+import { useImageFields } from "../../hooks/useImageFields";
+
+import Input from "../../components/Input/Input";
+import Form from "../../components/forms/Form";
+import IconD20 from "../../components/icons/IconD20";
+import Card from "../../components/Card/Card";
+import Button from "../../components/Button";
+import ImageField from "../../components/ImageField/ImageField";
+import MediaLibraryModal from "../../components/MediaLibraryModal/MediaLibraryModal";
+import ImageUpload from "../../components/ImageUpload/ImageUpload";
+import { ImageFieldConfig } from "../../types/ImageField";
+import "./AdminRole.css";
+
+type RoleFormInputs = {
+  name: string;
+};
+
+// Configuration for different image field types
+const IMAGE_FIELD_CONFIGS: ImageFieldConfig[] = [
+  {
+    type: "gallery",
+    label: "Featured Images",
+    description: "Multiple images that represent this role",
+    isMultiple: true,
+    maxCount: 9,
+    apiFieldName: "imageIds"
+  },
+  {
+    type: "background",
+    label: "Background Image", 
+    description: "Single background image for this role",
+    isMultiple: false,
+    maxCount: 1,
+    apiFieldName: "backgroundImageId"
+  }
+];
+
+const AdminRole = () => {
+  const { systemSlug, sectionSlug } = useParams();
+
+  if (!systemSlug || !sectionSlug) {
+    return <div>Error: Missing system or role slug</div>;
+  }
+
+  return (
+    <RoleProvider systemSlug={systemSlug} sectionSlug={sectionSlug}>
+      <AdminRoleContent />
+    </RoleProvider>
+  );
+};
+
+const AdminRoleContent: React.FC = () => {
+  const { data, isPending, isError, error } = useRole();
+  const { systemSlug, sectionSlug } = useParams();
+  const { register, handleSubmit, reset } = useForm<RoleFormInputs>();
+  const [optimisticData, setOptimisticData] = useState<{ name: string } | null>(null);
+  const role = data?.role;
+
+  // Use the custom hook for image field management
+  const {
+    modalState,
+    mediaLibraryImages,
+    isLoadingImages,
+    imagesError,
+    isUploading,
+    getImagesForField,
+    handleAddImageToField,
+    handleRemoveImageFromField,
+    handleImageDelete,
+    uploadToMediaLibraryMutation,
+    openModal,
+    closeModal,
+  } = useImageFields({ systemSlug: systemSlug!, sectionSlug: sectionSlug!, role });
+
+  // Mutation for updating role name
+    queryKey: ["images"],
+    queryFn: getImages,
+    refetchOnWindowFocus: false,
+    staleTime: 30000, // Cache for 30 seconds
+  });
+
+
+  // Mutation for updating role (name + background image)
+  const { mutate: updateRoleMutation, isPending: isUpdatingRole } = useMutation(
+    {
+      mutationFn: (roleData: { name: string }) =>
+        updateRole(systemSlug!, sectionSlug!, roleData),
+      onSuccess: (_data, variables) => {
+        toast("Role updated successfully");
+        setOptimisticData(variables);
+        reset(variables);
+        queryClient.invalidateQueries({
+          queryKey: ["role", systemSlug, sectionSlug],
+        });
+      },
+      onError: (err: Error) => {
+        console.error("Role update error:", err);
+        toast.error(err.message);
+      },
+    },
+  );
+
+  // Mutation for uploading multiple images to media library
+  const { mutate: uploadToMediaLibraryMutation } = useMutation({
+    mutationFn: async (files: File[]) => {
+      const uploadPromises = files.map(async (file) => {
+        const formData = new FormData();
+        formData.append("image", file);
+        formData.append("alt", `${role?.name || "Role"} image`);
+        formData.append("description", `Image for ${role?.name || "role"}`);
+
+        return await uploadImage(formData);
+      });
+
+      const results = await Promise.all(uploadPromises);
+      return results;
+    },
+    onSuccess: (results) => {
+      const count = results.length;
+      toast(`${count} image${count > 1 ? 's' : ''} uploaded successfully!`);
+      
+      // Reset the upload field
+      setUploadField({
+        id: "main-upload",
+        files: [],
+        previews: [],
+        isUploading: false,
+      });
+
+      // Clear the file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+
+      // Refresh images list
+      queryClient.invalidateQueries({ queryKey: ["images"] });
+    },
+    onError: (err: Error) => {
+      toast.error(`Upload failed: ${err.message}`);
+      
+      setUploadField((prev) => ({
+        ...prev,
+        isUploading: false,
+      }));
+    },
+  });
+
+  // Mutation for adding image to role
+  const { mutate: addImageToRoleMutation } = useMutation({
+    mutationFn: async (imageId: string) => {
+      const result = await addImageToRole(systemSlug!, sectionSlug!, imageId);
+      
+      if (!result) {
+        throw new Error('No result returned from addImageToRole');
+      }
+      
+      // WORKAROUND: If the backend doesn't return imageIds, manually add it
+      if (!result.imageIds) {
+        // Check both imageIds (new) and images (legacy) fields for compatibility
+        const currentIds = role?.imageIds || role?.images || [];
+        const updatedIds = currentIds.includes(imageId) ? currentIds : [...currentIds, imageId];
+        result.imageIds = updatedIds;
+      }
+      
+      return result;
+    },
+    onSuccess: async (updatedRoleData) => {
+      toast("Image added to role successfully");
+      
+      // Manually fetch the role again to ensure cache is updated
+      try {
+        const testRes = await fetch(`http://127.0.0.1:3000/api/v1/systems/${systemSlug}/roles/${sectionSlug}`);
+        if (testRes.ok) {
+          const testData = await testRes.json();
+          const testRole = testData.data?.role || testData.data;
+          
+          // Update cache with the confirmed data
+          queryClient.setQueryData(["role", systemSlug, sectionSlug], (oldData: any) => {
+            const newData = {
+              ...oldData,
+              role: testRole
+            };
+            return newData;
+          });
+        }
+      } catch (error) {
+        // Silently handle error, fallback to invalidation
+      }
+      
+      // Also invalidate queries to ensure consistency
+      queryClient.invalidateQueries({
+        queryKey: ["role", systemSlug, sectionSlug],
+      });
+      queryClient.invalidateQueries({ queryKey: ["images"] });
+    },
+    onError: (err: Error) => {
+      toast.error(`Failed adding image to role: ${err.message}`);
+    },
+  });
+
+  // Mutation for removing image from role
+  const { mutate: removeImageFromRoleMutation } = useMutation({
+    mutationFn: async (imageId: string) => {
+      const result = await removeImageFromRole(systemSlug!, sectionSlug!, imageId);
+      return result;
+    },
+    onSuccess: async (updatedRoleData, removedImageId) => {
+      toast("Image removed from role successfully");
+      
+      // Manually fetch the role again to ensure cache is updated
+      try {
+        const testRes = await fetch(`http://127.0.0.1:3000/api/v1/systems/${systemSlug}/roles/${sectionSlug}`);
+        if (testRes.ok) {
+          const testData = await testRes.json();
+          const testRole = testData.data?.role || testData.data;
+          
+          // Update cache with the confirmed data
+          queryClient.setQueryData(["role", systemSlug, sectionSlug], (oldData: any) => {
+            const newData = {
+              ...oldData,
+              role: testRole
+            };
+            return newData;
+          });
+        }
+      } catch (error) {
+        // Silently handle error, fallback to invalidation
+      }
+      
+      // Also invalidate queries to ensure consistency
+      queryClient.invalidateQueries({
+        queryKey: ["role", systemSlug, sectionSlug],
+      });
+      queryClient.invalidateQueries({ queryKey: ["images"] });
+    },
+    onError: (err: Error) => {
+      toast.error(`Failed removing image from role: ${err.message}`);
+    },
+  });
+
+  // Mutation for permanently deleting image from media library
+  const { mutate: deleteImageMutation } = useMutation({
+    mutationFn: async (imageId: string) => {
+      await deleteImage(imageId);
+    },
+    onSuccess: () => {
+      toast("Image deleted permanently from media library");
+      // Refresh both images list and role data
+      queryClient.invalidateQueries({ queryKey: ["images"] });
+      queryClient.invalidateQueries({
+        queryKey: ["role", systemSlug, sectionSlug],
+      });
+    },
+    onError: (err: Error) => {
+      toast.error(`Failed deleting image: ${err.message}`);
+    },
+  });
+
+
+  useEffect(() => {
+    if (role && !optimisticData) {
+      reset({ name: role.name });
+    }
+  }, [role, optimisticData, reset]);
+
+  if (isPending) return <h1>Loading...</h1>;
+  if (isError && error !== null)
+    return <h1>Error: {error.message || "Something went wrong"}</h1>;
+
+  if (!role) {
+    console.error("Role data is null");
+    return <div>Error: Role data is missing.</div>;
+  }
+
+  const onSubmit: SubmitHandler<RoleFormInputs> = (data) => {
+    updateRoleMutation(data);
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const fileList = event.target.files;
+    if (!fileList || fileList.length === 0) return;
+
+    const files = Array.from(fileList);
+    const validFiles: File[] = [];
+    const previews: string[] = [];
+
+    // Validate each file
+    for (const file of files) {
+      // Validate file type
+      if (!file.type.startsWith("image/")) {
+        toast.error(`"${file.name}" is not an image file - skipping`);
+        continue;
+      }
+
+      // Validate file size (e.g., 10MB limit)
+      if (file.size > 10 * 1024 * 1024) {
+        toast.error(`"${file.name}" is larger than 10MB - skipping`);
+        continue;
+      }
+
+      validFiles.push(file);
+    }
+
+    if (validFiles.length === 0) {
+      toast.error("No valid image files selected");
+      return;
+    }
+
+    // Create previews for valid files
+    const previewPromises = validFiles.map((file) => {
+      return new Promise<string>((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          resolve(e.target?.result as string);
+        };
+        reader.readAsDataURL(file);
+      });
+    });
+
+    Promise.all(previewPromises).then((previewResults) => {
+      setUploadField((prev) => ({
+        ...prev,
+        files: validFiles,
+        previews: previewResults,
+      }));
+    });
+  };
+
+  const uploadImageToMediaLibrary = () => {
+    if (uploadField.files.length === 0) {
+      toast.error("Please select files first");
+      return;
+    }
+
+    // Set uploading state
+    setUploadField((prev) => ({
+      ...prev,
+      isUploading: true,
+    }));
+
+    uploadToMediaLibraryMutation(uploadField.files);
+  };
+
+
+  const handleImageRemoveFromRole = (imageId: string) => {
+    if (window.confirm("Are you sure you want to remove this image from the role?")) {
+      removeImageFromRoleMutation(imageId);
+    }
+  };
+
+  const handleImageDelete = (imageId: string, imageName: string) => {
+    if (window.confirm(`Are you sure you want to permanently delete "${imageName}" from the media library? This action cannot be undone and will remove the image from all roles.`)) {
+      deleteImageMutation(imageId);
+    }
+  };
+
+  // Helper function to get images for a specific field type
+  const getImagesForField = (fieldType: ImageFieldType): ImageType[] => {
+    if (!Array.isArray(mediaLibraryImages) || !mediaLibraryImages.length) {
+      return [];
+    }
+
+    let imageIdentifiers: string[] = [];
+    
+    if (fieldType === ImageFieldType.GALLERY) {
+      // Check both imageIds (new) and images (legacy) fields
+      imageIdentifiers = role?.imageIds || role?.images || [];
+    } else if (fieldType === ImageFieldType.BACKGROUND) {
+      // Get background image from role data
+      const backgroundId = role?.backgroundImageId;
+      console.log('Looking for backgroundImageId in role:', backgroundId);
+      imageIdentifiers = backgroundId ? [backgroundId] : [];
+    }
+    
+    if (!imageIdentifiers.length) {
+      return [];
+    }
+    
+    const fieldImages = mediaLibraryImages.filter(img => {
+      const imgId = img.id || img._id;
+      return imageIdentifiers.includes(imgId);
+    });
+    
+    return fieldImages;
+  };
+
+  // Backward compatibility function
+  const getRoleImages = (): ImageType[] => {
+    return getImagesForField(ImageFieldType.GALLERY);
+  };
+
+  // Check if an image is assigned to a specific field
+  const isImageInField = (imageId: string, fieldType: ImageFieldType): boolean => {
+    const fieldImages = getImagesForField(fieldType);
+    return fieldImages.some(img => (img.id || img._id) === imageId);
+  };
+
+  // Modal control functions
+  const openMediaLibraryModal = (fieldType: ImageFieldType) => {
+    setModalState({
+      isOpen: true,
+      fieldType,
+    });
+  };
+
+  const closeMediaLibraryModal = () => {
+    setModalState({
+      isOpen: false,
+      fieldType: null,
+    });
+  };
+
+  // Generic function to handle adding image to any field
+  const handleAddImageToField = async (imageId: string, fieldType: ImageFieldType) => {
+    const config = IMAGE_FIELD_CONFIGS[fieldType];
+    console.log(`🔍 Adding image ${imageId} to field type ${fieldType}`);
+    
+    // Check if we're at the max limit for this field type
+    const currentImages = getImagesForField(fieldType);
+    if (config.maxCount && currentImages.length >= config.maxCount) {
+      toast.error(`Cannot exceed ${config.maxCount} image${config.maxCount > 1 ? 's' : ''} for ${config.label}`);
+      return;
+    }
+
+    // For single image fields, replace existing image
+    if (!config.isMultiple && currentImages.length > 0) {
+      const confirmReplace = window.confirm(`Replace the current ${config.label.toLowerCase()}?`);
+      if (!confirmReplace) return;
+    }
+
+    try {
+      // Call the appropriate API function directly
+      if (fieldType === ImageFieldType.GALLERY) {
+        console.log('📞 Calling addImageToRole for gallery');
+        await addImageToRole(systemSlug!, sectionSlug!, imageId);
+      } else if (fieldType === ImageFieldType.BACKGROUND) {
+        console.log('📞 Calling addImageToRoleField for background');
+        const result = await addImageToRoleField(systemSlug!, sectionSlug!, imageId, 'backgroundImageId');
+        console.log('✅ API result:', result);
+      }
+
+      toast(`Image added to ${config.label.toLowerCase()} successfully`);
+      
+      // Close modal for single image fields, keep open for multiple
+      if (!config.isMultiple) {
+        closeMediaLibraryModal();
+      }
+      
+      // Refresh the data
+      console.log('🔄 Invalidating queries...');
+      queryClient.invalidateQueries({ queryKey: ["role", systemSlug, sectionSlug] });
+      queryClient.invalidateQueries({ queryKey: ["images"] });
+      
+    } catch (err: any) {
+      console.error('❌ Error adding image to field:', err);
+      toast.error(`Failed adding image to ${config.label.toLowerCase()}: ${err.message}`);
+    }
+  };
+
+  // Generic function to handle removing image from any field
+  const handleRemoveImageFromField = async (imageId: string, fieldType: ImageFieldType) => {
+    const config = IMAGE_FIELD_CONFIGS[fieldType];
+    const confirmMessage = `Are you sure you want to remove this image from ${config.label.toLowerCase()}?`;
+    
+    if (window.confirm(confirmMessage)) {
+      try {
+        // Call the appropriate API function directly
+        if (fieldType === ImageFieldType.GALLERY) {
+          await removeImageFromRole(systemSlug!, sectionSlug!, imageId);
+        } else if (fieldType === ImageFieldType.BACKGROUND) {
+          await removeImageFromRoleField(systemSlug!, sectionSlug!, imageId, 'backgroundImageId');
+        }
+
+        toast(`Image removed from ${config.label.toLowerCase()} successfully`);
+        
+        // Refresh the data
+        queryClient.invalidateQueries({ queryKey: ["role", systemSlug, sectionSlug] });
+        queryClient.invalidateQueries({ queryKey: ["images"] });
+        
+      } catch (err: any) {
+        toast.error(`Failed removing image from ${config.label.toLowerCase()}: ${err.message}`);
+      }
+    }
+  };
+
+  // Generic component to render image section for any field type
+  const renderImageSection = (fieldType: ImageFieldType) => {
+    const config = IMAGE_FIELD_CONFIGS[fieldType];
+    const fieldImages = getImagesForField(fieldType);
+    const canAddMore = !config.maxCount || fieldImages.length < config.maxCount;
+    
+    return (
+      <div className="admin-images-section">
+        <div className="section-header">
+          <div>
+            <h3>{config.label} ({fieldImages.length}/{config.maxCount || '∞'})</h3>
+            <p className="field-description">{config.description}</p>
+          </div>
+          <Button
+            type="button"
+            onClick={() => openMediaLibraryModal(fieldType)}
+            disabled={!canAddMore}
+            className="add-images-btn"
+          >
+            {config.isMultiple ? `Add ${config.label}` : `Add ${config.label}`}
+          </Button>
+        </div>
+        
+        {fieldImages.length === 0 ? (
+          <div className="no-role-images">
+            <p>No images assigned to {config.label.toLowerCase()} yet.</p>
+            <p>Click "{config.isMultiple ? `Add ${config.label}` : `Add ${config.label}`}" to choose from the media library.</p>
+          </div>
+        ) : (
+          <div className="admin-images-grid">
+            {fieldImages.map((image, index) => (
+              <div key={image.id || image._id} className="admin-image-item">
+                <img
+                  src={`http://localhost:3000${image.filePath || `/public/img/media/${image.filename}`}`}
+                  alt={image.alt || `${config.label} ${index + 1}`}
+                  className="admin-image"
+                />
+                <button
+                  type="button"
+                  className="admin-image-delete"
+                  onClick={() => handleRemoveImageFromField(image.id || image._id, fieldType)}
+                  title={`Remove image from ${config.label.toLowerCase()}`}
+                >
+                  ×
+                </button>
+                {config.isMultiple && (
+                  <span className="admin-image-index">{index + 1}</span>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  return (
+    <div className="content-wrap">
+      <Form className="content" onSubmit={handleSubmit(onSubmit)}>
+        <div className="content__main">
+          <h1>Edit Role: {role.name}</h1>
+
+          {/* Role Name Input */}
+          <Input
+            type="text"
+            defaultValue={role.name}
+            placeholder="Enter role name..."
+            label="Role Name"
+            variant="large"
+            {...register("name", { required: "Role name is required" })}
+          />
+
+          {/* Role Image Fields */}
+          {renderImageSection(ImageFieldType.GALLERY)}
+          {renderImageSection(ImageFieldType.BACKGROUND)}
+
+          {/* Upload Section - Always Visible */}
+          <div className="admin-upload-section">
+            <div className="section-header">
+              <h3>Upload New Image to Media Library</h3>
+            </div>
+
+            <div className="image-upload-field">
+              <div className="upload-field-header">
+                <label className="upload-label">Select Images (multiple files supported)</label>
+              </div>
+
+              <div className="upload-field-content">
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handleFileChange}
+                  className="upload-input"
+                  disabled={uploadField.isUploading}
+                />
+
+                {uploadField.previews.length > 0 && (
+                  <div className="image-previews">
+                    <h5>Selected Images ({uploadField.files.length}):</h5>
+                    <div className="preview-grid">
+                      {uploadField.previews.map((preview, index) => (
+                        <div key={index} className="preview-item">
+                          <img
+                            src={preview}
+                            alt={`Preview ${index + 1}`}
+                            className="preview-image"
+                          />
+                          <span className="preview-filename">
+                            {uploadField.files[index]?.name}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <Button
+                  type="button"
+                  onClick={uploadImageToMediaLibrary}
+                  disabled={uploadField.files.length === 0 || uploadField.isUploading}
+                  className="upload-btn"
+                >
+                  {uploadField.isUploading 
+                    ? `Uploading ${uploadField.files.length} images...` 
+                    : `Upload ${uploadField.files.length} Image${uploadField.files.length !== 1 ? 's' : ''} to Media Library`
+                  }
+                </Button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <aside className="content__sidebar">
+          <Card>
+            <Button disabled={isUpdatingRole} variant="full" type="submit">
+              {isUpdatingRole ? "Saving..." : "Save Role"}
+              <IconD20 />
+            </Button>
+          </Card>
+        </aside>
+      </Form>
+
+      {/* Media Library Modal */}
+      {modalState.isOpen && modalState.fieldType && (
+        <div className="modal-overlay" onClick={closeMediaLibraryModal}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>Choose Images for {IMAGE_FIELD_CONFIGS[modalState.fieldType].label}</h2>
+              <button
+                type="button"
+                className="modal-close"
+                onClick={closeMediaLibraryModal}
+              >
+                ×
+              </button>
+            </div>
+            
+            <div className="modal-body">
+              {isLoadingImages ? (
+                <p>Loading images...</p>
+              ) : imagesError ? (
+                <div className="error-message">
+                  <p>Error loading images: {imagesError.message}</p>
+                  <p>The media library API endpoints need to be implemented on the backend.</p>
+                </div>
+              ) : (
+                <div className="modal-media-library-grid">
+                  {mediaLibraryImages.map((image) => {
+                    const imageId = image.id || image._id;
+                    const config = IMAGE_FIELD_CONFIGS[modalState.fieldType];
+                    const isInField = isImageInField(imageId, modalState.fieldType);
+                    const fieldImages = getImagesForField(modalState.fieldType);
+                    const canAdd = !isInField && (!config.maxCount || fieldImages.length < config.maxCount);
+                    
+                    return (
+                      <div key={imageId} className={`modal-media-library-item ${isInField ? 'in-field' : ''}`}>
+                        <img
+                          src={`http://localhost:3000${image.filePath || `/public/img/media/${image.filename}`}`}
+                          alt={image.alt || image.originalName}
+                          className="modal-media-library-image"
+                        />
+                        <div className="modal-media-library-overlay">
+                          <p className="image-name">{image.originalName}</p>
+                          <div className="modal-media-library-buttons">
+                            {isInField ? (
+                              <Button
+                                type="button"
+                                onClick={() => handleRemoveImageFromField(imageId, modalState.fieldType)}
+                                className="remove-btn"
+                                variant="danger"
+                                size="sm"
+                              >
+                                Remove
+                              </Button>
+                            ) : canAdd ? (
+                              <Button
+                                type="button"
+                                onClick={() => handleAddImageToField(imageId, modalState.fieldType)}
+                                className="add-btn"
+                                size="sm"
+                              >
+                                Select
+                              </Button>
+                            ) : (
+                              <Button
+                                type="button"
+                                disabled
+                                className="add-btn"
+                                size="sm"
+                              >
+                                {config.label} Full
+                              </Button>
+                            )}
+                            <Button
+                              type="button"
+                              onClick={() => handleImageDelete(imageId, image.originalName)}
+                              className="delete-btn"
+                              variant="danger"
+                              size="sm"
+                            >
+                              Delete
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                  {mediaLibraryImages.length === 0 && !isLoadingImages && (
+                    <div className="no-images-message">
+                      <p>No images in media library.</p>
+                      <p>Upload some images above first.</p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            <div className="modal-footer">
+              <Button
+                type="button"
+                onClick={closeMediaLibraryModal}
+                variant="secondary"
+              >
+                Done
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default AdminRole;

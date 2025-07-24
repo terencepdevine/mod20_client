@@ -1,14 +1,12 @@
-.form-group {
-  display: flex;
-  flex-direction: column;
-}
-
-.input {
+.textarea {
   background-color: var(--bg-input);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius-base);
   padding: var(--spacing-4);
   color: var(--text-primary);
+  font-family: inherit;
+  resize: vertical;
+  min-height: 100px;
 
   &::placeholder {
     color: var(--text-tertiary);
@@ -19,9 +17,10 @@
     border-color: var(--color-primary-500);
   }
 
-  &.input--large {
+  &.textarea--large {
     font-size: var(--font-size-lg);
     padding-top: var(--spacing-5);
     padding-bottom: var(--spacing-5);
+    min-height: 120px;
   }
 }

@@ -315,4 +315,38 @@
   --color-rose-800: #9f1239;
   --color-rose-900: #881337;
   --color-rose-950: #4c0519;
+
+  /* Theme Variables - Default (Dark Mode) */
+  --bg-page: var(--color-gray-950);
+  --bg-card: var(--color-gray-900);
+  --bg-input: var(--color-gray-900);
+  --bg-sidebar: var(--color-gray-900);
+  --bg-sidebar-item: var(--color-gray-800);
+  --bg-sidebar-item-active: var(--color-gray-950);
+  --bg-loading: var(--color-gray-900);
+  --bg-hero: var(--color-gray-900);
+  --text-primary: var(--color-gray-100);
+  --text-secondary: var(--color-gray-300);
+  --text-tertiary: var(--color-gray-400);
+  --scrollbar-track: var(--color-gray-900);
+  --scrollbar-thumb: var(--color-gray-800);
+  --border-color: var(--color-gray-700);
+}
+
+/* Light Theme */
+[data-theme="light"] {
+  --bg-page: var(--color-gray-50);
+  --bg-card: var(--color-white);
+  --bg-input: var(--color-white);
+  --bg-sidebar: var(--color-gray-100);
+  --bg-sidebar-item: var(--color-gray-200);
+  --bg-sidebar-item-active: var(--color-gray-300);
+  --bg-loading: var(--color-gray-100);
+  --bg-hero: var(--color-gray-100);
+  --text-primary: var(--color-gray-900);
+  --text-secondary: var(--color-gray-700);
+  --text-tertiary: var(--color-gray-600);
+  --scrollbar-track: var(--color-gray-200);
+  --scrollbar-thumb: var(--color-gray-400);
+  --border-color: var(--color-gray-300);
 }
