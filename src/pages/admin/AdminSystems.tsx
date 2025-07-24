@@ -1,8 +1,8 @@
 import { Link, useLoaderData } from "react-router-dom";
-import { System } from "@mod20/types";
+import { SystemType } from "@mod20/types";
 
 const AdminSystems: React.FC = () => {
-  const systems = useLoaderData() as System[];
+  const systems = useLoaderData() as SystemType[];
 
   return (
     <>

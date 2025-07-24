@@ -10,7 +10,7 @@ interface SidebarNavigationItemProps {
     slug: string;
     children?: {
       name: string;
-      slug: string;
+      id: string;
     }[];
   };
 }
@@ -46,11 +46,11 @@ const SidebarNavigationItem = ({
           >
             {item.children.map((child) => (
               <li
-                key={child.slug}
-                className={`nav-sidebar__sub-item ${sectionSlug === child.slug ? "nav-sidebar__sub-item--active" : ""}`}
+                key={child.id}
+                className={`nav-sidebar__sub-item ${sectionSlug === child.id ? "nav-sidebar__sub-item--active" : ""}`}
               >
                 <Link
-                  to={`/systems/${systemSlug}/${item.slug}/${child.slug}`}
+                  to={`/systems/${systemSlug}/${item.slug}/${child.id}`}
                   className={`nav-sidebar__sub-link`}
                 >
                   {child.name}

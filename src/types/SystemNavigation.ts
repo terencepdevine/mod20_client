@@ -14,5 +14,5 @@ export interface SystemNavigationItemType {
 
 export interface SystemNavigationChildType {
   name: string;
-  id: string;
+  slug: string;
 }

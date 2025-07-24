@@ -2,7 +2,7 @@ import { createContext, ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 
 import { ContextType } from "../types/Context";
-import { SystemNavigationType } from "../types/SystemNavigation";
+import { SystemNavigationType } from "@mod20/types";
 import { getNavigation } from "../services/apiSystem";
 
 export const SystemNavigationContext = createContext<

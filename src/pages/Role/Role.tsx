@@ -24,7 +24,7 @@ const Role: React.FC = () => {
 
 const RoleContent: React.FC = () => {
   const { data, isPending, isError, error } = useRole();
-  const role = data.role as RoleType;
+  const role = data?.role as RoleType;
 
   // Query for media library images to resolve Image IDs
   const { data: allImages = [] } = useQuery({
@@ -59,7 +59,7 @@ const RoleContent: React.FC = () => {
             const roleImages = getRoleImages();
             return roleImages.length > 0 && (
               <ImageGallery
-                images={roleImages.map(img => `http://localhost:3000${img.filePath || `/public/img/media/${img.filename}`}`)}
+                images={roleImages.map(img => `http://localhost:3000/public/img/media/${img.filename}`)}
                 basePath=""
                 alt={`${role.name} images`}
               />

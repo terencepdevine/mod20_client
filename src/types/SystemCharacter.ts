@@ -1,9 +1,8 @@
-import { Race } from "./Race";
-import { Role } from "./Role";
+import { RaceType, RoleType } from "@mod20/types";
 
 export interface SystemCharacter {
   id: string;
   name: string;
-  races?: Race[];
-  roles?: Role[];
+  races?: RaceType[];
+  roles?: RoleType[];
 }

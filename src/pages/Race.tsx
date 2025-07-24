@@ -19,7 +19,7 @@ const Race: React.FC = () => {
 
 const RaceContent: React.FC = () => {
   const { data, isPending, isError, error } = useRace();
-  const race = data?.race as RaceType;
+  const race = data as RaceType;
 
   if (isPending) return <h1>Loading...</h1>;
   if (isError && error !== null)

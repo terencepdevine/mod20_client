@@ -329,7 +329,7 @@ export async function removeImageFromRoleField(
     // Handle multiple images (gallery) - remove from array
     // Check both imageIds (new) and images (legacy) fields for compatibility
     const currentImageIds = currentRole.imageIds || currentRole.images || [];
-    const updatedImageIds = currentImageIds.filter(id => id !== imageId);
+    const updatedImageIds = currentImageIds.filter((id: string) => id !== imageId);
     
     requestBody = {
       imageIds: updatedImageIds,  // New field name

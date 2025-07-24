@@ -146,7 +146,7 @@ export const useImageFields = ({ systemSlug, sectionSlug, role }: UseImageFields
     onSuccess: () => {
       toast("Image deleted permanently from media library");
     },
-    onError: (err: Error, imageId, context) => {
+    onError: (err: Error, _imageId, context) => {
       // Roll back the optimistic updates
       if (context?.previousImages) {
         queryClient.setQueryData(["images"], context.previousImages);
@@ -224,7 +224,7 @@ export const useImageFields = ({ systemSlug, sectionSlug, role }: UseImageFields
       
       return { previousRole };
     },
-    onSuccess: (data, { config }) => {
+    onSuccess: (_data, { config }) => {
       toast(`Image added to ${config.label.toLowerCase()} successfully`);
       
       // Close modal for single image fields, keep open for multiple
@@ -298,7 +298,7 @@ export const useImageFields = ({ systemSlug, sectionSlug, role }: UseImageFields
       
       return { previousRole };
     },
-    onSuccess: (data, { config }) => {
+    onSuccess: (_data, { config }) => {
       toast(`Image removed from ${config.label.toLowerCase()} successfully`);
     },
     onError: (err: Error, { config }, context) => {
