@@ -1,14 +1,17 @@
 import { Outlet, useParams, Link, useLocation } from "react-router-dom";
 import { SystemProvider } from "../../provider/SystemProvider";
 import { useSystem } from "../../hooks/useProvider";
-import "./AdminLayout.css";
+import "./AdminLayout.scss";
 
 const AdminLayout: React.FC = () => {
   const location = useLocation();
   const { systemSlug } = useParams<{ systemSlug: string }>();
-  
+
   // Check if we're on a system-specific route
-  const isSystemRoute = location.pathname.includes('/systems/') && systemSlug && systemSlug !== 'new';
+  const isSystemRoute =
+    location.pathname.includes("/systems/") &&
+    systemSlug &&
+    systemSlug !== "new";
 
   if (isSystemRoute) {
     return (
@@ -67,14 +70,10 @@ const Sidebar: React.FC = () => {
         <nav>
           <ul>
             <li>
-              <Link to={`/admin/systems/${systemSlug}`}>
-                System Settings
-              </Link>
+              <Link to={`/admin/systems/${systemSlug}`}>System Settings</Link>
             </li>
             <li>
-              <Link to={`/admin/systems`}>
-                ← Back to Systems
-              </Link>
+              <Link to={`/admin/systems`}>← Back to Systems</Link>
             </li>
           </ul>
         </nav>
@@ -92,7 +91,8 @@ const Sidebar: React.FC = () => {
                 </Link>
               </li>
             ))}
-            {(!system.character?.roles || system.character.roles.length === 0) && (
+            {(!system.character?.roles ||
+              system.character.roles.length === 0) && (
               <li>No roles available</li>
             )}
             <li>
@@ -116,7 +116,8 @@ const Sidebar: React.FC = () => {
                 </Link>
               </li>
             ))}
-            {(!system.character?.races || system.character.races.length === 0) && (
+            {(!system.character?.races ||
+              system.character.races.length === 0) && (
               <li>No races available</li>
             )}
             <li>
@@ -131,8 +132,12 @@ const Sidebar: React.FC = () => {
       {/* System Info */}
       <div className="sidebar-section">
         <h4>System Info</h4>
-        <p><strong>Version:</strong> {system.version || 'N/A'}</p>
-        <p><strong>Slug:</strong> {system.slug}</p>
+        <p>
+          <strong>Version:</strong> {system.version || "N/A"}
+        </p>
+        <p>
+          <strong>Slug:</strong> {system.slug}
+        </p>
       </div>
     </aside>
   );

@@ -17,7 +17,7 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
 import Input from "../Input/Input";
-import Button from "../Button";
+import Button from "../Button/Button";
 import "./AbilityScoresSection.scss";
 
 interface AbilityScoresSectionProps {
@@ -60,8 +60,14 @@ const SortableAbilityItem: React.FC<SortableAbilityItemProps> = ({
   // Set CSS custom properties for transform and transition
   useEffect(() => {
     if (elementRef.current) {
-      elementRef.current.style.setProperty('--dnd-transform', CSS.Transform.toString(transform) || 'none');
-      elementRef.current.style.setProperty('--dnd-transition', transition || 'none');
+      elementRef.current.style.setProperty(
+        "--dnd-transform",
+        CSS.Transform.toString(transform) || "none",
+      );
+      elementRef.current.style.setProperty(
+        "--dnd-transition",
+        transition || "none",
+      );
     }
   }, [transform, transition]);
 
@@ -74,7 +80,7 @@ const SortableAbilityItem: React.FC<SortableAbilityItemProps> = ({
   return (
     <div
       ref={combinedRef}
-      className={`ability-scores-section__item ${isDragging ? 'ability-scores-section__item--dragging' : ''}`}
+      className={`ability-scores-section__item ${isDragging ? "ability-scores-section__item--dragging" : ""}`}
     >
       <div
         {...attributes}
@@ -102,11 +108,7 @@ const SortableAbilityItem: React.FC<SortableAbilityItemProps> = ({
         />
       </div>
       <div className="ability-scores-section__item-actions">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() => remove(index)}
-        >
+        <Button type="button" variant="outline" onClick={() => remove(index)}>
           Remove
         </Button>
       </div>
@@ -132,7 +134,7 @@ const AbilityScoresSection: React.FC<AbilityScoresSectionProps> = ({
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    })
+    }),
   );
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -143,7 +145,7 @@ const AbilityScoresSection: React.FC<AbilityScoresSectionProps> = ({
       const newIndex = fields.findIndex((field) => field.id === over.id);
 
       move(oldIndex, newIndex);
-      
+
       // Update order values in form after reordering
       if (setValue) {
         // Update all order values to match new positions

@@ -58,6 +58,19 @@ export async function createEditSystem(
   return data;
 }
 
+export async function deleteSystem(systemSlug: string): Promise<void> {
+  const res = await fetch(`${API_URL}/systems/${systemSlug}`, {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+  });
+  
+  if (!res.ok) {
+    const errorText = await res.text();
+    console.error("Delete system API error:", res.status, errorText);
+    throw Error(`Failed deleting System ${systemSlug}: ${res.status} - ${errorText}`);
+  }
+}
+
 // export async function createEditSystem(newSystem, id) {
 //   const res = await fetch(`${API_URL}/systems`);
 // }
@@ -194,6 +207,22 @@ export async function updateRole(
   return data.role;
 }
 
+export async function deleteRole(
+  systemSlug: string,
+  sectionSlug: string
+): Promise<void> {
+  const res = await fetch(`${API_URL}/systems/${systemSlug}/roles/${sectionSlug}`, {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+  });
+  
+  if (!res.ok) {
+    const errorText = await res.text();
+    console.error("Delete role API error:", res.status, errorText);
+    throw Error(`Failed deleting Role ${sectionSlug}: ${res.status} - ${errorText}`);
+  }
+}
+
 export async function updateRace(
   systemSlug: string,
   sectionSlug: string,
@@ -225,6 +254,22 @@ export async function updateRace(
 
   const { data }: { data: { race: RaceType } } = await res.json();
   return data.race;
+}
+
+export async function deleteRace(
+  systemSlug: string,
+  sectionSlug: string
+): Promise<void> {
+  const res = await fetch(`${API_URL}/systems/${systemSlug}/races/${sectionSlug}`, {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+  });
+  
+  if (!res.ok) {
+    const errorText = await res.text();
+    console.error("Delete race API error:", res.status, errorText);
+    throw Error(`Failed deleting Race ${sectionSlug}: ${res.status} - ${errorText}`);
+  }
 }
 
 export async function createRace(
@@ -277,9 +322,14 @@ export async function createRace(
 
 
 // Media Library API Functions
-export async function getImages(): Promise<ImageType[]> {
+export async function getImages(systemId?: string): Promise<ImageType[]> {
   try {
-    const res = await fetch(`${API_URL}/images`);
+    const url = systemId 
+      ? `${API_URL}/images?systemId=${systemId}`
+      : `${API_URL}/images`;
+    console.log('getImages: Fetching images with URL:', url);
+    console.log('getImages: systemId parameter:', systemId);
+    const res = await fetch(url);
     
     if (!res.ok) {
       if (res.status === 404) {

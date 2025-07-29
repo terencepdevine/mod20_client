@@ -3,9 +3,10 @@ import { useParams } from "react-router-dom";
 
 import { useSystem } from "../../hooks/useProvider";
 import { MediaLibraryProvider } from "../../components/MediaLibrary/MediaLibraryProvider";
-import { AdminSystemForm } from "../../components/admin/AdminSystemForm";
+import { AdminSystemForm } from "../../components/AdminSystemForm/AdminSystemForm";
 
 import { useSystemMutation } from "../../hooks/useSystemMutation";
+import { useDeleteSystem } from "../../hooks/useDeleteSystem";
 import {
   formatAbilitiesForForm,
   mergeLocalChanges,
@@ -28,6 +29,7 @@ const AdminSystemContent: React.FC = () => {
     updateSystemField,
   } = useSystemMutation(systemSlug as string);
 
+  const { mutate: deleteSystem, isPending: isDeleting } = useDeleteSystem();
 
   // Loading and error states
   if (isPending) return <h1>Loading...</h1>;
@@ -47,6 +49,10 @@ const AdminSystemContent: React.FC = () => {
     mutate({ newSystem: updateData, systemSlug: systemSlug as string });
   };
 
+  // Delete handler
+  const handleDelete = () => {
+    deleteSystem({ systemSlug: systemSlug as string });
+  };
 
   return (
     <MediaLibraryProvider
@@ -55,6 +61,7 @@ const AdminSystemContent: React.FC = () => {
       queryKey={["system", system.slug]}
       updateEntity={updateSystemField}
       isUpdating={isUpdating}
+      systemId={system.id}
     >
       <AdminSystemForm
         system={system}
@@ -63,6 +70,9 @@ const AdminSystemContent: React.FC = () => {
         onSubmit={handleFormSubmit}
         formatAbilitiesForForm={formatAbilitiesForForm}
         newRoleLink={`/admin/systems/${systemSlug}/roles/new`}
+        systemSlug={systemSlug}
+        onDelete={handleDelete}
+        isDeleting={isDeleting}
       />
     </MediaLibraryProvider>
   );

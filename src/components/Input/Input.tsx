@@ -1,5 +1,5 @@
 import React, { forwardRef } from "react";
-import Label from "../forms/Label";
+import Label from "../Label/Label";
 import "./Input.scss";
 
 type InputProps = React.InputHTMLAttributes<HTMLInputElement> & {

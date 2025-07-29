@@ -4,9 +4,10 @@ import { useParams } from "react-router-dom";
 import { RaceProvider } from "../../provider/RaceProvider";
 import { useRace, useSystem } from "../../hooks/useProvider";
 import { MediaLibraryProvider } from "../../components/MediaLibrary/MediaLibraryProvider";
-import { AdminRaceForm } from "../../components/admin/AdminRaceForm";
+import { AdminRaceForm } from "../../components/AdminRaceForm/AdminRaceForm";
 
 import { useRaceMutation } from "../../hooks/useRaceMutation";
+import { useDeleteRace } from "../../hooks/useDeleteRace";
 import { mergeRaceWithLocalChanges } from "../../utils/raceUtils";
 import { RaceFormData } from "../../types/adminTypes";
 
@@ -44,6 +45,9 @@ const AdminRaceContent: React.FC = () => {
     updateRaceField,
   } = useRaceMutation(systemSlug as string, sectionSlug as string);
 
+  const { mutate: deleteRace, isPending: isDeleting } = useDeleteRace(
+    systemSlug as string
+  );
 
   // Loading and error states
   if (isPending || systemPending || !system) {
@@ -61,12 +65,20 @@ const AdminRaceContent: React.FC = () => {
   }
 
   // Create race data with local changes for MediaLibrary
-  const raceWithLocalChanges = mergeRaceWithLocalChanges(race, localImageChanges);
+  const raceWithLocalChanges = mergeRaceWithLocalChanges(
+    race,
+    localImageChanges,
+  );
 
   // Form submission handler
   const handleFormSubmit = (data: RaceFormData) => {
     const updateData = { ...data, ...localImageChanges };
     mutate(updateData);
+  };
+
+  // Delete handler
+  const handleDelete = () => {
+    deleteRace({ sectionSlug: sectionSlug as string });
   };
 
   return (
@@ -76,6 +88,7 @@ const AdminRaceContent: React.FC = () => {
       queryKey={["race", systemSlug || "", sectionSlug || ""]}
       updateEntity={updateRaceField}
       isUpdating={isUpdating}
+      systemId={system.id}
     >
       <AdminRaceForm
         race={race}
@@ -83,6 +96,10 @@ const AdminRaceContent: React.FC = () => {
         isUpdating={isUpdating}
         optimisticData={optimisticData}
         onSubmit={handleFormSubmit}
+        systemSlug={systemSlug}
+        sectionSlug={sectionSlug}
+        onDelete={handleDelete}
+        isDeleting={isDeleting}
       />
     </MediaLibraryProvider>
   );

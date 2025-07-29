@@ -30,5 +30,6 @@ export interface MediaLibraryProviderProps {
   queryKey: string[]; // Query key for the entity
   updateEntity: (fieldKey: string, value: any) => Promise<any>; // Function to update entity
   isUpdating?: boolean;
+  systemId?: string; // System ID for filtering images
   children: React.ReactNode;
 }

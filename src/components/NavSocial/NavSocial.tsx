@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
 
-import IconYoutube from "../icons/IconYoutube";
-import IconTwitch from "../icons/IconTwitch";
-import IconDiscord from "../icons/IconDiscord";
-import IconInstagram from "../icons/IconInstagram";
+import IconYoutube from "../IconYoutube/IconYoutube";
+import IconTwitch from "../IconTwitch/IconTwitch";
+import IconDiscord from "../IconDiscord/IconDiscord";
+import IconInstagram from "../IconInstagram/IconInstagram";
 
 import "./NavSocial.css";
 

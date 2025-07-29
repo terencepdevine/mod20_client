@@ -1,8 +1,8 @@
-import React, { useRef, useState } from 'react';
-import { MediaLibraryModalProps } from '../../types/ImageField';
-import Button from '../Button';
-import { toast } from 'react-toastify';
-import './MediaLibraryModal.css';
+import React, { useRef, useState } from "react";
+import { MediaLibraryModalProps } from "../../types/ImageField";
+import Button from "../Button/Button";
+import { toast } from "react-toastify";
+import "./MediaLibraryModal.css";
 
 const MediaLibraryModal: React.FC<MediaLibraryModalProps> = ({
   isOpen,
@@ -18,7 +18,7 @@ const MediaLibraryModal: React.FC<MediaLibraryModalProps> = ({
   onUpload,
   isLoadingImages = false,
   imagesError = null,
-  isUploading = false
+  isUploading = false,
 }) => {
   if (!isOpen) return null;
 
@@ -80,7 +80,7 @@ const MediaLibraryModal: React.FC<MediaLibraryModalProps> = ({
     }
 
     onUpload(selectedFiles);
-    
+
     // Clear selection after upload
     setSelectedFiles([]);
     setPreviews([]);
@@ -90,7 +90,7 @@ const MediaLibraryModal: React.FC<MediaLibraryModalProps> = ({
   };
 
   const isImageInField = (imageId: string): boolean => {
-    return currentImages.some(img => img.id === imageId);
+    return currentImages.some((img) => img.id === imageId);
   };
 
   const canAddMore = !maxCount || currentImages.length < maxCount;
@@ -106,15 +106,11 @@ const MediaLibraryModal: React.FC<MediaLibraryModalProps> = ({
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <h2>{title}</h2>
-          <button
-            type="button"
-            className="modal-close"
-            onClick={onClose}
-          >
+          <button type="button" className="modal-close" onClick={onClose}>
             ×
           </button>
         </div>
-        
+
         <div className="modal-body">
           {/* Upload Section */}
           <div className="modal-upload-section">
@@ -156,10 +152,9 @@ const MediaLibraryModal: React.FC<MediaLibraryModalProps> = ({
                 disabled={selectedFiles.length === 0 || isUploading}
                 className="upload-btn"
               >
-                {isUploading 
-                  ? `Uploading ${selectedFiles.length} images...` 
-                  : `Upload ${selectedFiles.length} Image${selectedFiles.length !== 1 ? 's' : ''} to Media Library`
-                }
+                {isUploading
+                  ? `Uploading ${selectedFiles.length} images...`
+                  : `Upload ${selectedFiles.length} Image${selectedFiles.length !== 1 ? "s" : ""} to Media Library`}
               </Button>
             </div>
           </div>
@@ -172,78 +167,79 @@ const MediaLibraryModal: React.FC<MediaLibraryModalProps> = ({
             ) : imagesError ? (
               <div className="error-message">
                 <p>Error loading images: {imagesError.message}</p>
-                <p>The media library API endpoints need to be implemented on the backend.</p>
+                <p>
+                  The media library API endpoints need to be implemented on the
+                  backend.
+                </p>
               </div>
             ) : (
               <div className="modal-media-library-grid">
-              {mediaLibraryImages.map((image) => {
-                const imageId = image.id;
-                const isInField = isImageInField(imageId);
-                const canAdd = !isInField && canAddMore;
-                
-                return (
-                  <div key={imageId} className={`modal-media-library-item ${isInField ? 'in-field' : ''}`}>
-                    <img
-                      src={`http://localhost:3000/public/img/media/${image.filename}`}
-                      alt={image.alt || image.originalName}
-                      className="modal-media-library-image"
-                    />
-                    <div className="modal-media-library-overlay">
-                      <p className="image-name">{image.originalName}</p>
-                      <div className="modal-media-library-buttons">
-                        {isInField ? (
+                {mediaLibraryImages.map((image) => {
+                  const imageId = image.id;
+                  const isInField = isImageInField(imageId);
+                  const canAdd = !isInField && canAddMore;
+
+                  return (
+                    <div
+                      key={imageId}
+                      className={`modal-media-library-item ${isInField ? "in-field" : ""}`}
+                    >
+                      <img
+                        src={`http://localhost:3000/public/img/media/${image.filename}`}
+                        alt={image.alt || image.originalName}
+                        className="modal-media-library-image"
+                      />
+                      <div className="modal-media-library-overlay">
+                        <p className="image-name">{image.originalName}</p>
+                        <div className="modal-media-library-buttons">
+                          {isInField ? (
+                            <Button
+                              type="button"
+                              onClick={() => onRemoveImage(imageId)}
+                              className="remove-btn"
+                            >
+                              Remove
+                            </Button>
+                          ) : canAdd ? (
+                            <Button
+                              type="button"
+                              onClick={() => onAddImage(imageId)}
+                              className="add-btn"
+                            >
+                              Select
+                            </Button>
+                          ) : (
+                            <Button type="button" disabled className="add-btn">
+                              {label} Full
+                            </Button>
+                          )}
                           <Button
                             type="button"
-                            onClick={() => onRemoveImage(imageId)}
-                            className="remove-btn"
+                            onClick={() =>
+                              onDeleteImage(imageId, image.originalName)
+                            }
+                            className="delete-btn"
                           >
-                            Remove
+                            Delete
                           </Button>
-                        ) : canAdd ? (
-                          <Button
-                            type="button"
-                            onClick={() => onAddImage(imageId)}
-                            className="add-btn"
-                          >
-                            Select
-                          </Button>
-                        ) : (
-                          <Button
-                            type="button"
-                            disabled
-                            className="add-btn"
-                          >
-                            {label} Full
-                          </Button>
-                        )}
-                        <Button
-                          type="button"
-                          onClick={() => onDeleteImage(imageId, image.originalName)}
-                          className="delete-btn"
-                        >
-                          Delete
-                        </Button>
+                        </div>
                       </div>
                     </div>
+                  );
+                })}
+                {mediaLibraryImages.length === 0 && !isLoadingImages && (
+                  <div className="no-images-message">
+                    <p>No images in media library.</p>
+                    <p>Upload some images first.</p>
                   </div>
-                );
-              })}
-              {mediaLibraryImages.length === 0 && !isLoadingImages && (
-                <div className="no-images-message">
-                  <p>No images in media library.</p>
-                  <p>Upload some images first.</p>
-                </div>
-              )}
-            </div>
+                )}
+              </div>
             )}
           </div>
         </div>
 
         <div className="modal-footer">
-          <Button
-            type="button"
-            onClick={onClose}
-          >
+          <Button type="button" onClick={onClose}>
             Done
           </Button>
         </div>

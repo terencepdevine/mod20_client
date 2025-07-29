@@ -8,7 +8,7 @@ const IconD20: React.FC<IconD20Props> = ({ className = "fill-sky-500" }) => {
       width="26"
       height="31"
       viewBox="0 0 26 31"
-      fill="#0891b2"
+      fill="#fff"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
     >

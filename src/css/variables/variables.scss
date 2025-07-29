@@ -338,7 +338,9 @@
   --border-disabled: var(--color-gray-600);
 
   /* Icon Colors */
-  --icon-color-disabled: #4b5563;
+  --icon-disabled: #4b5563;
+  --icon-primary: var(--color-primary-500);
+  --icon-secondary: var(--color-gray-400);
 }
 
 /* Light Theme */

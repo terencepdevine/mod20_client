@@ -1,5 +1,5 @@
 import React, { forwardRef } from "react";
-import Label from "../forms/Label";
+import Label from "../Label/Label";
 import "./Select.css";
 
 export interface SelectOption {
@@ -16,8 +16,11 @@ type SelectProps = React.SelectHTMLAttributes<HTMLSelectElement> & {
 
 const Select = forwardRef<HTMLSelectElement, SelectProps>(
   ({ label = "", options, placeholder, ...props }, ref) => {
-    const selectId = props.id || props.name || `select-${Math.random().toString(36).substr(2, 9)}`;
-    
+    const selectId =
+      props.id ||
+      props.name ||
+      `select-${Math.random().toString(36).substr(2, 9)}`;
+
     return (
       <div className="form-group">
         {label && <Label htmlFor={selectId}>{label}</Label>}

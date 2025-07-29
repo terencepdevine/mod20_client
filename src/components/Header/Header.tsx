@@ -3,9 +3,9 @@ import { Link } from "react-router-dom";
 import Search from "../Search/Search";
 import NavSocial from "../NavSocial/NavSocial";
 import NavMain from "../NavMain/NavMain";
-import IconD20 from "../icons/IconD20";
+import IconD20 from "../IconD20/IconD20";
 
-import "./Header.css";
+import "./Header.scss";
 import NavUser from "../NavUser/NavUser";
 
 const Header: React.FC = () => {

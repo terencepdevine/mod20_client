@@ -16,13 +16,15 @@ interface UseMediaLibraryProps {
   entityData: any; // Current entity data
   queryKey: string[]; // Query key for the entity (e.g., ['role', systemSlug, sectionSlug])
   updateEntity: (fieldKey: string, value: any) => Promise<any>; // Function to update entity
+  systemId?: string; // System ID for filtering images
 }
 
 export const useMediaLibrary = ({ 
   entityType, 
   entityData, 
   queryKey, 
-  updateEntity 
+  updateEntity,
+  systemId 
 }: UseMediaLibraryProps) => {
   const [modalState, setModalState] = useState<{
     isOpen: boolean;
@@ -34,10 +36,13 @@ export const useMediaLibrary = ({
 
   // No more assigned images calculation - use full library to prevent query-based flashing
 
-  // Always load full media library - no more selective loading to prevent flash
+  // Load media library filtered by system if systemId is provided
   const { data: mediaLibraryImages = [], isLoading: isLoadingImages, error: imagesError } = useQuery({
-    queryKey: ["images"],
-    queryFn: getImages,
+    queryKey: ["images", systemId],
+    queryFn: () => {
+      console.log('useMediaLibrary: Loading images for systemId:', systemId);
+      return getImages(systemId);
+    },
     refetchOnWindowFocus: false,
     staleTime: 5 * 60 * 1000,
   });
@@ -50,6 +55,12 @@ export const useMediaLibrary = ({
         formData.append("image", file);
         formData.append("alt", `${entityType} image`);
         formData.append("description", `Image for ${entityType}`);
+        if (systemId) {
+          console.log('useMediaLibrary: Uploading image with systemId:', systemId);
+          formData.append("system", systemId);
+        } else {
+          console.warn('useMediaLibrary: No systemId provided for upload!');
+        }
         return await uploadImage(formData);
       });
       return await Promise.all(uploadPromises);
@@ -57,7 +68,7 @@ export const useMediaLibrary = ({
     onSuccess: (results) => {
       const count = results.length;
       toast(`${count} image${count > 1 ? 's' : ''} uploaded successfully!`);
-      queryClient.invalidateQueries({ queryKey: ["images"] });
+      queryClient.invalidateQueries({ queryKey: ["images", systemId] });
     },
     onError: (err: Error) => {
       toast.error(`Upload failed: ${err.message}`);
@@ -71,15 +82,15 @@ export const useMediaLibrary = ({
     },
     onMutate: async (imageId: string) => {
       // Cancel any outgoing refetches
-      await queryClient.cancelQueries({ queryKey: ["images"] });
+      await queryClient.cancelQueries({ queryKey: ["images", systemId] });
       await queryClient.cancelQueries({ queryKey });
       
       // Snapshot the previous values
-      const previousImages = queryClient.getQueryData(["images"]);
+      const previousImages = queryClient.getQueryData(["images", systemId]);
       const previousEntity = queryClient.getQueryData(queryKey);
       
       // Optimistically remove image from images list
-      queryClient.setQueryData(["images"], (old: any) => {
+      queryClient.setQueryData(["images", systemId], (old: any) => {
         if (!Array.isArray(old)) return old;
         return old.filter((img: any) => img.id !== imageId);
       });
@@ -114,7 +125,7 @@ export const useMediaLibrary = ({
     onError: (_err: Error, _imageId, context) => {
       // Roll back the optimistic updates
       if (context?.previousImages) {
-        queryClient.setQueryData(["images"], context.previousImages);
+        queryClient.setQueryData(["images", systemId], context.previousImages);
       }
       if (context?.previousEntity) {
         queryClient.setQueryData(queryKey, context.previousEntity);
@@ -123,7 +134,7 @@ export const useMediaLibrary = ({
     },
     onSettled: () => {
       // Always refetch after mutation settles
-      queryClient.invalidateQueries({ queryKey: ["images"] });
+      queryClient.invalidateQueries({ queryKey: ["images", systemId] });
       queryClient.invalidateQueries({ queryKey });
     },
   });

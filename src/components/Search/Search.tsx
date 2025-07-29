@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import IconSearch from "../icons/IconSearch";
+import IconSearch from "../IconSearch/IconSearch";
 import Pill from "../Pill/Pill";
 import PillWrap from "../Pill/PillWrap";
 

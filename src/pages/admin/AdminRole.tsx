@@ -4,9 +4,10 @@ import { useParams } from "react-router-dom";
 import { RoleProvider } from "../../provider/RoleProvider";
 import { useRole, useSystem } from "../../hooks/useProvider";
 import { MediaLibraryProvider } from "../../components/MediaLibrary/MediaLibraryProvider";
-import { AdminRoleForm } from "../../components/admin/AdminRoleForm";
+import { AdminRoleForm } from "../../components/AdminRoleForm/AdminRoleForm";
 
 import { useRoleMutation } from "../../hooks/useRoleMutation";
+import { useDeleteRole } from "../../hooks/useDeleteRole";
 import { mergeRoleWithLocalChanges } from "../../utils/roleUtils";
 import { RoleFormData } from "../../types/adminTypes";
 
@@ -44,6 +45,10 @@ const AdminRoleContent: React.FC = () => {
     updateRoleField,
   } = useRoleMutation(systemSlug as string, sectionSlug as string);
 
+  const { mutate: deleteRole, isPending: isDeleting } = useDeleteRole(
+    systemSlug as string
+  );
+
   // Loading and error states
   if (isPending || systemPending || !system) {
     return <div className="loading-state">Loading...</div>;
@@ -60,12 +65,20 @@ const AdminRoleContent: React.FC = () => {
   }
 
   // Create role data with local changes for MediaLibrary
-  const roleWithLocalChanges = mergeRoleWithLocalChanges(role, localImageChanges);
+  const roleWithLocalChanges = mergeRoleWithLocalChanges(
+    role,
+    localImageChanges,
+  );
 
   // Form submission handler
   const handleFormSubmit = (data: RoleFormData) => {
     const updateData = { ...data, ...localImageChanges };
     mutate(updateData);
+  };
+
+  // Delete handler
+  const handleDelete = () => {
+    deleteRole({ sectionSlug: sectionSlug as string });
   };
 
   return (
@@ -75,6 +88,7 @@ const AdminRoleContent: React.FC = () => {
       queryKey={["role", systemSlug || "", sectionSlug || ""]}
       updateEntity={updateRoleField}
       isUpdating={isUpdating}
+      systemId={system.id}
     >
       <AdminRoleForm
         role={role}
@@ -82,6 +96,10 @@ const AdminRoleContent: React.FC = () => {
         isUpdating={isUpdating}
         optimisticData={optimisticData}
         onSubmit={handleFormSubmit}
+        systemSlug={systemSlug}
+        sectionSlug={sectionSlug}
+        onDelete={handleDelete}
+        isDeleting={isDeleting}
       />
     </MediaLibraryProvider>
   );

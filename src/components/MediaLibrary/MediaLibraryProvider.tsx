@@ -10,6 +10,7 @@ export const MediaLibraryProvider: React.FC<MediaLibraryProviderProps> = ({
   queryKey,
   updateEntity,
   isUpdating = false,
+  systemId,
   children
 }) => {
   const {
@@ -25,7 +26,7 @@ export const MediaLibraryProvider: React.FC<MediaLibraryProviderProps> = ({
     uploadToMediaLibraryMutation,
     openModal,
     closeModal,
-  } = useMediaLibrary({ entityType, entityData, queryKey, updateEntity });
+  } = useMediaLibrary({ entityType, entityData, queryKey, updateEntity, systemId });
 
   // Simplified modal handlers
   const handleModalAddImage = (imageId: string) => {

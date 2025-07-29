@@ -30,6 +30,10 @@
     transition: 0.3s ease all;
   }
 
+  &__icon {
+    fill: var(--icon-primary);
+  }
+
   .logo__text {
     font-size: var(--font-size-2xl);
     font-weight: var(--font-weight-semibold);

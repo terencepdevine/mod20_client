@@ -1,86 +1,76 @@
-import { useForm, SubmitHandler } from "react-hook-form";
-import Form from "../../components/forms/Form";
-// import Input from "../../components/forms/Input";
-// import TextEditor from "../../components/forms/TextEditor";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createEditSystem } from "../../services/apiSystem";
-import { toast } from "react-toastify";
+import React, { useState } from "react";
 
-type Inputs = {
-  name: string;
-  introduction?: string;
-};
+import { MediaLibraryProvider } from "../../components/MediaLibrary/MediaLibraryProvider";
+import { AdminSystemForm } from "../../components/AdminSystemForm/AdminSystemForm";
+import { useCreateSystem } from "../../hooks/useCreateSystem";
+import { SystemFormData } from "../../types/adminTypes";
 
 const AdminSystemNew: React.FC = () => {
-  const {
-    register,
-    handleSubmit,
-    // watch,
-    formState: { errors },
-    // control,
-    reset,
-  } = useForm<Inputs>();
-  const queryClient = useQueryClient();
-  const { mutate, isPending } = useMutation({
-    mutationFn: createEditSystem,
-    onSuccess: () => {
-      toast("New System Created.");
-      queryClient.invalidateQueries({
-        queryKey: ["systems"],
-      });
-      reset();
-    },
-    onError: (err) => alert(err.message),
-  });
+  const { mutate: createSystem, isPending: isCreating } = useCreateSystem();
 
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
-    mutate(data);
+  // Form submission handler
+  const handleFormSubmit = (formData: SystemFormData) => {
+    const finalSystemData = {
+      ...formData,
+      // Include current image data
+      backgroundImageId: systemData.backgroundImageId,
+      images: systemData.images,
+    };
+    console.log("Creating system with data:", finalSystemData);
+    createSystem(finalSystemData);
   };
 
-  const handleCancel = () => {
-    toast("Message", {
-      autoClose: 5000,
-      position: "top-right",
-    });
+  // Create stable system object for the form with image fields
+  const [systemData] = useState(() => ({
+    id: "",
+    slug: "",
+    name: "",
+    version: "",
+    introduction: "",
+    createdAt: undefined,
+    updatedAt: undefined,
+    abilities: [],
+    character: {} as any, // Empty object as placeholder
+    isNew: true,
+    // Image fields - these will be mutated directly
+    backgroundImageId: null,
+    images: [],
+  }));
+
+  // Update function for MediaLibrary - directly mutate the object to avoid re-renders
+  const updateField = async (fieldKey: string, value: any) => {
+    // Directly mutate the object to avoid triggering useEffect in AdminSystemForm
+    (systemData as any)[fieldKey] = value;
+    return Promise.resolve({ [fieldKey]: value });
   };
 
-  if (isPending) return <h1>Loading...</h1>;
+  // Simple format function for abilities (empty array for new system)
+  const formatAbilitiesForForm = (abilities: any[]) => {
+    return abilities || [];
+  };
+
+  // Show loading state while creating to prevent flash
+  if (isCreating) {
+    return <div className="loading-state">Creating system...</div>;
+  };
 
   return (
-    <>
-      <Form onSubmit={handleSubmit(onSubmit)}>
-        <input defaultValue="Name" {...register("name")} />
-        {errors.name && <span>This field is required</span>}
-        <input defaultValue="Introduction" {...register("introduction")} />
-        <div>
-          <button type="reset" onClick={() => handleCancel}>
-            Cancel
-          </button>
-          <button type="submit">Submit</button>
-        </div>
-      </Form>
-      {/* <Form onSubmit={handleSubmit(onSubmit)}>
-        <Input
-          label="System Name"
-          type="text"
-          id="name"
-          placeholder="Enter System Name..."
-          {...register("name")}
-        />
-
-        <TextEditor
-          label="Introduction"
-          name="introduction"
-          control={control}
-          placeholder="Enter System Introduction"
-        />
-
-        <button type="reset" onClick={() => handleCancel()}>
-          Cancel
-        </button>
-        <button disabled={isPending}>Submit</button>
-      </Form> */}
-    </>
+    <MediaLibraryProvider
+      entityType="system"
+      entityData={systemData}
+      queryKey={["system", "new"]}
+      updateEntity={updateField}
+      isUpdating={isCreating}
+      systemId={undefined} // No system ID for new system creation
+    >
+      <AdminSystemForm
+        system={systemData}
+        isUpdating={isCreating}
+        optimisticData={null}
+        onSubmit={handleFormSubmit}
+        formatAbilitiesForForm={formatAbilitiesForForm}
+      />
+    </MediaLibraryProvider>
   );
 };
 

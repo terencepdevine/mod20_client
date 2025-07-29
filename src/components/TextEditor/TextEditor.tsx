@@ -1,6 +1,6 @@
 import { Controller } from "react-hook-form";
 import { Editor } from "@tinymce/tinymce-react";
-import Label from "./Label";
+import Label from "../Label/Label";
 
 interface TextEditorProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -19,7 +19,7 @@ const TextEditor: React.FC<TextEditorProps> = ({
   defaultValue = "",
 }) => {
   const editorId = `texteditor-${name}`;
-  
+
   return (
     <div className="flex flex-col">
       {label && <Label htmlFor={editorId}>{label}</Label>}

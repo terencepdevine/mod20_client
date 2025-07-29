@@ -1,8 +1,8 @@
 import React, { useEffect, useRef } from "react";
 import { useMediaLibraryContext } from "./MediaLibraryContext";
 import { ImageFieldConfig } from "./types";
-import Button from "../Button";
-import Label from "../forms/Label";
+import Button from "../Button/Button";
+import Label from "../Label/Label";
 import {
   ArrowUpTrayIcon,
   Bars2Icon,
@@ -210,6 +210,7 @@ export const MediaLibraryImageField: React.FC<MediaLibraryImageFieldProps> = ({
               id={fieldId}
               onClick={handleAdd}
               disabled={isUpdating}
+              variant="outline"
               type="button"
             >
               Add {label}

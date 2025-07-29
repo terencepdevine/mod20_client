@@ -3,14 +3,15 @@ import { useForm, SubmitHandler } from "react-hook-form";
 
 import Input from "../Input/Input";
 import Select from "../Select/Select";
-import Form from "../forms/Form";
-import IconD20 from "../icons/IconD20";
+import Form from "../Form/Form";
+import { FormDate } from "../FormDate/FormDate";
+import IconD20 from "../IconD20/IconD20";
 import Card from "../Card/Card";
-import Button from "../Button";
+import Button from "../Button/Button";
 import { MediaLibraryImageField } from "../MediaLibrary";
 import { SIZE_OPTIONS } from "../../utils/raceUtils";
 import { RaceFormData } from "../../types/adminTypes";
-import { CalendarDaysIcon } from "@heroicons/react/16/solid";
+import { TrashIcon } from "@heroicons/react/16/solid";
 
 interface AdminRaceFormProps {
   race: any;
@@ -18,6 +19,11 @@ interface AdminRaceFormProps {
   isUpdating: boolean;
   optimisticData: { name: string } | null;
   onSubmit: (data: RaceFormData) => void;
+  // Optional delete functionality - only provided for existing races, not new ones
+  systemSlug?: string;
+  sectionSlug?: string;
+  onDelete?: () => void;
+  isDeleting?: boolean;
 }
 
 export const AdminRaceForm: React.FC<AdminRaceFormProps> = ({
@@ -26,6 +32,10 @@ export const AdminRaceForm: React.FC<AdminRaceFormProps> = ({
   isUpdating,
   optimisticData,
   onSubmit,
+  systemSlug,
+  sectionSlug,
+  onDelete,
+  isDeleting = false,
 }) => {
   const {
     register,
@@ -54,6 +64,21 @@ export const AdminRaceForm: React.FC<AdminRaceFormProps> = ({
     onSubmit(data);
   };
 
+  const handleDelete = () => {
+    if (!onDelete || !race.name) return;
+
+    const confirmDelete = window.confirm(
+      `Are you sure you want to delete the race "${race.name}"? This action cannot be undone.`,
+    );
+
+    if (confirmDelete) {
+      onDelete();
+    }
+  };
+
+  // Only show delete button for existing races (not new ones)
+  const showDeleteButton = onDelete && systemSlug && sectionSlug && race.name;
+
   return (
     <div className="content-wrap">
       <Form className="content" onSubmit={handleSubmit(handleFormSubmit)}>
@@ -81,9 +106,6 @@ export const AdminRaceForm: React.FC<AdminRaceFormProps> = ({
               label="Flying Speed"
               {...register("speedFlying", { valueAsNumber: true })}
             />
-          </div>
-
-          <div className="form-row">
             <Input
               type="number"
               placeholder="Swimming speed..."
@@ -96,30 +118,25 @@ export const AdminRaceForm: React.FC<AdminRaceFormProps> = ({
               label="Climbing Speed"
               {...register("speedClimbing", { valueAsNumber: true })}
             />
-          </div>
-
-          <div className="form-row">
             <Input
               type="number"
               placeholder="Burrowing speed..."
               label="Burrowing Speed"
               {...register("speedBurrowing", { valueAsNumber: true })}
             />
-            <Input
-              type="number"
-              placeholder="Age..."
-              label="Age"
-              {...register("age", { valueAsNumber: true })}
-            />
           </div>
-
+          <Input
+            type="number"
+            placeholder="Age..."
+            label="Age"
+            {...register("age", { valueAsNumber: true })}
+          />
           <Select
             placeholder="Select size"
             label="Size"
             options={SIZE_OPTIONS}
             {...register("size")}
           />
-
           <Input
             type="text"
             placeholder="Languages spoken..."
@@ -130,34 +147,38 @@ export const AdminRaceForm: React.FC<AdminRaceFormProps> = ({
 
         <aside className="content__sidebar">
           <Card>
-            <div className="form-date">
-              <CalendarDaysIcon className="w-4 h-4" />
-              <p>
-                Created at:{" "}
-                {race.createdAt
-                  ? new Date(race.createdAt).toLocaleDateString()
-                  : "Unknown"}
-              </p>
+            <div className="flex flex-col gap-2">
+              <div className="form-date-wrapper">
+                <FormDate label="Created at" date={race.createdAt} />
+                <FormDate label="Updated at" date={race.updatedAt} />
+              </div>
+              {showDeleteButton && (
+                <Button
+                  disabled={isDeleting || isUpdating}
+                  variant="danger"
+                  type="button"
+                  onClick={handleDelete}
+                >
+                  {isDeleting ? "Deleting..." : "Delete Race"}
+                  <TrashIcon className="w-4 h-4" />
+                </Button>
+              )}
+              <Button
+                disabled={isUpdating}
+                size="lg"
+                variant="full"
+                type="submit"
+              >
+                {isUpdating
+                  ? race.name
+                    ? "Saving..."
+                    : "Creating..."
+                  : race.name
+                    ? "Save Race"
+                    : "Create Race"}
+                <IconD20 className="w-4 w-4 fill-white" />
+              </Button>
             </div>
-            <div className="form-date">
-              <CalendarDaysIcon className="w-4 h-4" />
-              <p>
-                Updated at:{" "}
-                {race.updatedAt
-                  ? new Date(race.updatedAt).toLocaleDateString()
-                  : "Unknown"}
-              </p>
-            </div>
-            <Button disabled={isUpdating} variant="full" type="submit">
-              {isUpdating
-                ? race.name
-                  ? "Saving..."
-                  : "Creating..."
-                : race.name
-                  ? "Save Race"
-                  : "Create Race"}
-              <IconD20 />
-            </Button>
           </Card>
 
           <MediaLibraryImageField

@@ -3,14 +3,21 @@ import { useParams } from "react-router-dom";
 
 import { useSystem } from "../../hooks/useProvider";
 import { MediaLibraryProvider } from "../../components/MediaLibrary/MediaLibraryProvider";
-import { AdminRoleForm } from "../../components/admin/AdminRoleForm";
+import { AdminRoleForm } from "../../components/AdminRoleForm/AdminRoleForm";
 import { useCreateRole } from "../../hooks/useCreateRole";
 import { RoleFormData } from "../../types/adminTypes";
 
 const AdminRoleNew: React.FC = () => {
   const { systemSlug } = useParams<{ systemSlug: string }>();
-  const { data: system, isPending: systemPending, isError, error } = useSystem();
-  const { mutate: createRole, isPending: isCreating } = useCreateRole(systemSlug as string);
+  const {
+    data: system,
+    isPending: systemPending,
+    isError,
+    error,
+  } = useSystem();
+  const { mutate: createRole, isPending: isCreating } = useCreateRole(
+    systemSlug as string,
+  );
 
   // Loading and error states
   if (systemPending || !system) {
@@ -72,6 +79,7 @@ const AdminRoleNew: React.FC = () => {
       queryKey={["role", "new"]}
       updateEntity={updateField}
       isUpdating={isCreating}
+      systemId={system.id}
     >
       <AdminRoleForm
         role={roleData}

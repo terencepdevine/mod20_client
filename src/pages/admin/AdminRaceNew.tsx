@@ -3,14 +3,21 @@ import { useParams } from "react-router-dom";
 
 import { useSystem } from "../../hooks/useProvider";
 import { MediaLibraryProvider } from "../../components/MediaLibrary/MediaLibraryProvider";
-import { AdminRaceForm } from "../../components/admin/AdminRaceForm";
+import { AdminRaceForm } from "../../components/AdminRaceForm/AdminRaceForm";
 import { useCreateRace } from "../../hooks/useCreateRace";
 import { RaceFormData } from "../../types/adminTypes";
 
 const AdminRaceNew: React.FC = () => {
   const { systemSlug } = useParams<{ systemSlug: string }>();
-  const { data: system, isPending: systemPending, isError, error } = useSystem();
-  const { mutate: createRace, isPending: isCreating } = useCreateRace(systemSlug as string);
+  const {
+    data: system,
+    isPending: systemPending,
+    isError,
+    error,
+  } = useSystem();
+  const { mutate: createRace, isPending: isCreating } = useCreateRace(
+    systemSlug as string,
+  );
 
   // Loading and error states
   if (systemPending || !system) {
@@ -76,6 +83,7 @@ const AdminRaceNew: React.FC = () => {
       queryKey={["race", "new"]}
       updateEntity={updateField}
       isUpdating={isCreating}
+      systemId={system.id}
     >
       <AdminRaceForm
         race={raceData}
