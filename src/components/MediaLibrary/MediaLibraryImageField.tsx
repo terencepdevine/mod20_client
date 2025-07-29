@@ -1,13 +1,107 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { useMediaLibraryContext } from "./MediaLibraryContext";
 import { ImageFieldConfig } from "./types";
 import Button from "../Button";
+import Label from "../forms/Label";
+import {
+  ArrowUpTrayIcon,
+  Bars2Icon,
+  XMarkIcon,
+} from "@heroicons/react/16/solid";
 import "./MediaLibraryImageField.scss";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+  useSortable,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 // Helper function to get image URL
 const getImageUrl = (filename: string) => {
   if (!filename) return "";
   return `http://localhost:3000/public/img/media/${filename}`;
+};
+
+// Sortable Image Item Component
+const SortableImageItem: React.FC<{
+  image: any;
+  index: number;
+  handleRemove: (imageId: string) => void;
+  isUpdating: boolean;
+}> = ({ image, index, handleRemove, isUpdating }) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: image.id });
+
+  const elementRef = useRef<HTMLDivElement>(null);
+
+  // Set CSS custom properties for transform and transition
+  useEffect(() => {
+    if (elementRef.current) {
+      elementRef.current.style.setProperty(
+        "--dnd-transform",
+        CSS.Transform.toString(transform) || "none",
+      );
+      elementRef.current.style.setProperty(
+        "--dnd-transition",
+        transition || "none",
+      );
+    }
+  }, [transform, transition]);
+
+  // Combine refs
+  const combinedRef = (el: HTMLDivElement | null) => {
+    elementRef.current = el;
+    setNodeRef(el);
+  };
+
+  return (
+    <div
+      ref={combinedRef}
+      className={`media-field__item ${isDragging ? "media-field__item--dragging" : ""}`}
+    >
+      <div
+        className="media-field__item-drag-handle"
+        {...attributes}
+        {...listeners}
+      >
+        <Bars2Icon />
+      </div>
+      <img
+        src={getImageUrl(image.filename)}
+        alt={image.alt || `Image ${index + 1}`}
+        className="media-field__item-image"
+      />
+      <div className="media-field__item-content">
+        <div className="media-field__item-title">
+          {image.alt || image.filename || `Image ${index + 1}`}
+        </div>
+      </div>
+      <button
+        onClick={() => handleRemove(image.id)}
+        className="media-field__item-remove"
+        disabled={isUpdating}
+      >
+        <XMarkIcon />
+      </button>
+    </div>
+  );
 };
 
 interface MediaLibraryImageFieldProps {
@@ -35,9 +129,6 @@ export const MediaLibraryImageField: React.FC<MediaLibraryImageFieldProps> = ({
     isUpdating,
   } = useMediaLibraryContext();
 
-  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
-  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
-
   // Create config object from individual props for backward compatibility
   const config: ImageFieldConfig = {
     type,
@@ -53,58 +144,44 @@ export const MediaLibraryImageField: React.FC<MediaLibraryImageFieldProps> = ({
     handleRemoveImageFromField(imageId, config);
   const currentImages = getImagesForField(config);
 
-  // Drag and drop handlers for multiple images
-  const handleDragStart = (e: React.DragEvent, index: number) => {
-    setDraggedIndex(index);
-    e.dataTransfer.effectAllowed = "move";
-  };
+  // dnd-kit drag and drop handlers
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
+  );
 
-  const handleDragOver = (e: React.DragEvent, index: number) => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = "move";
-    setDragOverIndex(index);
-  };
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
 
-  const handleDragLeave = () => {
-    setDragOverIndex(null);
-  };
+    if (over && active.id !== over.id) {
+      const oldIndex = currentImages.findIndex((img) => img.id === active.id);
+      const newIndex = currentImages.findIndex((img) => img.id === over.id);
 
-  const handleDrop = (e: React.DragEvent, dropIndex: number) => {
-    e.preventDefault();
-
-    if (draggedIndex === null || draggedIndex === dropIndex) {
-      setDraggedIndex(null);
-      setDragOverIndex(null);
-      return;
+      if (oldIndex !== -1 && newIndex !== -1) {
+        const reorderedImages = arrayMove(currentImages, oldIndex, newIndex);
+        const newImageIds = reorderedImages.map((img) => img.id);
+        handleReorderImages(newImageIds, config);
+      }
     }
-
-    // Reorder the images
-    const reorderedImages = [...currentImages];
-    const [draggedImage] = reorderedImages.splice(draggedIndex, 1);
-    reorderedImages.splice(dropIndex, 0, draggedImage);
-
-    // Update the field with new order (array of image IDs)
-    const newImageIds = reorderedImages.map((img) => img.id);
-    handleReorderImages(newImageIds, config);
-
-    setDraggedIndex(null);
-    setDragOverIndex(null);
-  };
-
-  const handleDragEnd = () => {
-    setDraggedIndex(null);
-    setDragOverIndex(null);
   };
 
   // Single Image Field Design
   if (!isMultiple) {
     const image = currentImages[0];
+    const fieldId = `media-field-${fieldKey}`;
 
     return (
       <div className="media-field media-field--single">
-        <div className="media-field__header">
-          <h3 className="media-field__label">{label}</h3>
-          <p className="media-field__description">{description}</p>
+        <div className="media-field__label">
+          <Label
+            htmlFor={fieldId}
+            variant="media-field"
+            description={description}
+          >
+            {label}
+          </Label>
         </div>
 
         {image ? (
@@ -120,7 +197,7 @@ export const MediaLibraryImageField: React.FC<MediaLibraryImageFieldProps> = ({
                 className="media-field__remove-btn"
                 disabled={isUpdating}
               >
-                ×
+                <XMarkIcon />
               </button>
             </div>
             <div className="media-field__title">
@@ -129,7 +206,12 @@ export const MediaLibraryImageField: React.FC<MediaLibraryImageFieldProps> = ({
           </div>
         ) : (
           <div className="media-field__empty">
-            <Button onClick={handleAdd} disabled={isUpdating} type="button">
+            <Button
+              id={fieldId}
+              onClick={handleAdd}
+              disabled={isUpdating}
+              type="button"
+            >
               Add {label}
             </Button>
           </div>
@@ -139,79 +221,57 @@ export const MediaLibraryImageField: React.FC<MediaLibraryImageFieldProps> = ({
   }
 
   // Multiple Images Field Design
+  const multipleFieldId = `media-field-${fieldKey}-multiple`;
+
   return (
     <div className="media-field media-field--multiple">
-      <div className="media-field__header">
-        <div className="media-field__header-content">
-          <h3 className="media-field__label">{label}</h3>
-          <p className="media-field__description">{description}</p>
-        </div>
+      <div className="media-field__label">
+        <Label
+          htmlFor={multipleFieldId}
+          variant="media-field"
+          description={description}
+        >
+          {label}
+        </Label>
       </div>
 
       <div className="media-field__list">
         {currentImages.length > 0 ? (
-          currentImages.map((image, index) => (
-            <div
-              key={image.id}
-              className={`media-field__item ${draggedIndex === index ? "media-field__item--dragging" : ""} ${dragOverIndex === index ? "media-field__item--drag-over" : ""}`}
-              draggable
-              onDragStart={(e) => handleDragStart(e, index)}
-              onDragOver={(e) => handleDragOver(e, index)}
-              onDragLeave={handleDragLeave}
-              onDrop={(e) => handleDrop(e, index)}
-              onDragEnd={handleDragEnd}
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <SortableContext
+              items={currentImages.map((img) => img.id)}
+              strategy={verticalListSortingStrategy}
             >
-              <div className="media-field__item-drag-handle">
-                <svg
-                  width="12"
-                  height="12"
-                  viewBox="0 0 12 12"
-                  fill="currentColor"
-                >
-                  <circle cx="2" cy="2" r="1" />
-                  <circle cx="6" cy="2" r="1" />
-                  <circle cx="10" cy="2" r="1" />
-                  <circle cx="2" cy="6" r="1" />
-                  <circle cx="6" cy="6" r="1" />
-                  <circle cx="10" cy="6" r="1" />
-                  <circle cx="2" cy="10" r="1" />
-                  <circle cx="6" cy="10" r="1" />
-                  <circle cx="10" cy="10" r="1" />
-                </svg>
-              </div>
-              <img
-                src={getImageUrl(image.filename)}
-                alt={image.alt || `Image ${index + 1}`}
-                className="media-field__item-image"
-              />
-              <div className="media-field__item-content">
-                <div className="media-field__item-title">
-                  {image.alt || image.filename || `Image ${index + 1}`}
-                </div>
-              </div>
-              <button
-                onClick={() => handleRemove(image.id)}
-                className="media-field__item-remove"
-                disabled={isUpdating}
-              >
-                ×
-              </button>
-            </div>
-          ))
+              {currentImages.map((image, index) => (
+                <SortableImageItem
+                  key={image.id}
+                  image={image}
+                  index={index}
+                  handleRemove={handleRemove}
+                  isUpdating={isUpdating}
+                />
+              ))}
+            </SortableContext>
+          </DndContext>
         ) : (
           <div className="media-field__empty">
             <p>No images added yet</p>
           </div>
         )}
         <Button
+          id={multipleFieldId}
           onClick={handleAdd}
+          variant="outline"
           disabled={
-            isUpdating ||
-            (maxCount ? currentImages.length >= maxCount : false)
+            isUpdating || (maxCount ? currentImages.length >= maxCount : false)
           }
           type="button"
         >
-          Add Images
+          Add Images <ArrowUpTrayIcon className="w-4 h-4 fill-primary" />
         </Button>
       </div>
     </div>

@@ -5,7 +5,7 @@
 
 .input {
   background-color: var(--bg-input);
-  border: 1px solid var(--border-color);
+  border: none;
   border-radius: var(--border-radius-base);
   padding: var(--spacing-4);
   color: var(--text-primary);
@@ -17,11 +17,5 @@
   &:focus {
     outline: none;
     border-color: var(--color-primary-500);
-  }
-
-  &.input--large {
-    font-size: var(--font-size-lg);
-    padding-top: var(--spacing-5);
-    padding-bottom: var(--spacing-5);
   }
 }

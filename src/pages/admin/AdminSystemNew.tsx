@@ -34,7 +34,6 @@ const AdminSystemNew: React.FC = () => {
   });
 
   const onSubmit: SubmitHandler<Inputs> = (data) => {
-    console.log(data);
     mutate(data);
   };
 

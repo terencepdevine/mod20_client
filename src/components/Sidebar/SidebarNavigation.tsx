@@ -11,7 +11,6 @@ const SidebarNavigation: React.FC = () => {
     return <h1>Error: {error.message || "Something went wrong"}</h1>;
 
   if (!data) {
-    console.error("SystemNavigationContext is null");
     return <div>Error: Navigation data is missing.</div>;
   }
 

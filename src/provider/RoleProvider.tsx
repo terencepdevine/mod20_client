@@ -1,10 +1,9 @@
 import { createContext, ReactNode } from "react";
-import { ContextType } from "@mod20/types";
+import { ContextType, RoleType } from "@mod20/types";
 import { useQuery } from "@tanstack/react-query";
 import { roleQuery } from "../loaders/roleLoader";
-import { RoleWithBreadcrumbs } from "../services/apiSystem";
 
-export const RoleContext = createContext<ContextType<RoleWithBreadcrumbs> | undefined>(
+export const RoleContext = createContext<ContextType<RoleType> | undefined>(
   undefined,
 );
 

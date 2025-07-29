@@ -24,7 +24,7 @@ const Role: React.FC = () => {
 
 const RoleContent: React.FC = () => {
   const { data, isPending, isError, error } = useRole();
-  const role = data?.role as RoleType;
+  const role = data as RoleType;
 
   // Query for media library images to resolve Image IDs
   const { data: allImages = [] } = useQuery({
@@ -45,9 +45,9 @@ const RoleContent: React.FC = () => {
   const getRoleImages = (): ImageType[] => {
     if (!role?.images || !allImages.length) return [];
     const orderedImages = role.images.sort((a, b) => a.orderby - b.orderby);
-    return orderedImages.map(item => 
-      allImages.find(img => img.id === item.imageId)
-    ).filter(Boolean) as ImageType[];
+    return orderedImages
+      .map((item) => allImages.find((img) => img.id === item.imageId))
+      .filter(Boolean) as ImageType[];
   };
 
   return (
@@ -57,12 +57,17 @@ const RoleContent: React.FC = () => {
         <div className="content__main wysiwyg">
           {(() => {
             const roleImages = getRoleImages();
-            return roleImages.length > 0 && (
-              <ImageGallery
-                images={roleImages.map(img => `http://localhost:3000/public/img/media/${img.filename}`)}
-                basePath=""
-                alt={`${role.name} images`}
-              />
+            return (
+              roleImages.length > 0 && (
+                <ImageGallery
+                  images={roleImages.map(
+                    (img) =>
+                      `http://localhost:3000/public/img/media/${img.filename}`,
+                  )}
+                  basePath=""
+                  alt={`${role.name} images`}
+                />
+              )
             );
           })()}
 
@@ -85,12 +90,13 @@ const RoleContent: React.FC = () => {
               level
             </p>
             <p>
-              <strong>Hit Points at 1st Level:</strong> {role.hp_dice} + your
-              Constitution modifier.
+              <strong>Hit Points at 1st Level:</strong> {role.hp_dice} + your{" "}
+              {role.primaryAbility?.name || "primary ability"} modifier.
             </p>
             <p>
               <strong>Hit Points at Higher Levels:</strong> 1d{role.hp_dice} +
-              your Constitution modifier per {role.name} level after 1st.
+              your {role.primaryAbility?.name || "primary ability"} modifier per{" "}
+              {role.name} level after 1st.
             </p>
           </div>
 
@@ -99,13 +105,19 @@ const RoleContent: React.FC = () => {
             {role.armorTaxonomies && (
               <p>
                 <strong>Armor: </strong>
-                {joinWithComma(role.armorTaxonomies)}
+                {role.armorTaxonomies
+                  ? joinWithComma(role.armorTaxonomies.map((item) => item.name))
+                  : "None"}
               </p>
             )}
             {role.weaponTaxonomies && (
               <p>
                 <strong>Weapons: </strong>
-                {joinWithComma(role.weaponTaxonomies)}
+                {role.weaponTaxonomies
+                  ? joinWithComma(
+                      role.weaponTaxonomies.map((item) => item.name),
+                    )
+                  : "None"}
               </p>
             )}
             <p>
@@ -115,13 +127,17 @@ const RoleContent: React.FC = () => {
             {role.savingThrows && (
               <p>
                 <strong>Saving Throws: </strong>
-                {joinWithComma(role.savingThrows)}
+                {role.savingThrows
+                  ? joinWithComma(role.savingThrows.map((item) => item.name))
+                  : "None"}
               </p>
             )}
             {role.skills && (
               <p>
                 <strong>Skills: </strong>
-                {joinWithComma(role.skills)}
+                {role.skills
+                  ? joinWithComma(role.skills.map((item) => item.name))
+                  : "None"}
               </p>
             )}
           </div>

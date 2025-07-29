@@ -1,4 +1,5 @@
 import { RaceType, RoleType, SystemType, SystemNavigationType, ImageType } from "@mod20/types";
+import { generateSlug } from "../utils/slugUtils";
 
 const API_URL = "http://127.0.0.1:3000/api/v1";
 
@@ -23,6 +24,8 @@ export async function createEditSystem(
     name: string;
     version?: string;
     introduction?: string;
+    backgroundImageId?: string | null;
+    abilities?: Array<{ name: string; description?: string }>;
   },
   systemSlug?: string,
 ): Promise<SystemType> {
@@ -91,23 +94,18 @@ export async function getRoles(systemSlug: string): Promise<unknown> {
   return data;
 }
 
-export interface RoleWithBreadcrumbs {
-  breadcrumbs: Array<{ name: string; slug: string }>;
-  role: RoleType;
-}
-
 export async function getRole(
   systemSlug: string,
   sectionSlug: string,
-): Promise<RoleWithBreadcrumbs> {
+): Promise<RoleType> {
   const res = await fetch(
     `${API_URL}/systems/${systemSlug}/roles/${sectionSlug}`,
   );
 
   if (!res.ok) throw new Error(`Failed getting Role #${sectionSlug}`);
 
-  const { data }: { data: RoleWithBreadcrumbs } = await res.json();
-  return data;
+  const { data }: { data: { role: RoleType } } = await res.json();
+  return data.role;
 }
 
 export async function getRace(
@@ -119,8 +117,8 @@ export async function getRace(
   );
   if (!res.ok) throw Error(`Failed getting Race #${sectionSlug}`);
 
-  const { data }: { data: RaceType } = await res.json();
-  return data;
+  const { data }: { data: { race: RaceType } } = await res.json();
+  return data.race;
 }
 
 export async function getNavigation(systemSlug: string): Promise<SystemNavigationType> {
@@ -131,6 +129,43 @@ export async function getNavigation(systemSlug: string): Promise<SystemNavigatio
   return data;
 }
 
+export async function createRole(
+  systemSlug: string,
+  roleData: {
+    name: string;
+    system: string;
+    hp_dice?: number;
+    introduction?: string;
+    primaryAbility?: string;
+    images?: Array<{ imageId: string; orderby: number }>;
+    backgroundImageId?: string | null;
+  }
+): Promise<RoleType> {
+  const res = await fetch(`${API_URL}/systems/${systemSlug}/roles`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(roleData),
+  });
+  
+  if (!res.ok) {
+    const errorText = await res.text();
+    console.error("Create role API error:", res.status, errorText);
+    throw Error(`Failed creating Role: ${res.status}`);
+  }
+
+  const response = await res.json();
+  console.log("Create role API response:", response);
+  
+  if (response.data?.role) {
+    return response.data.role;
+  } else if (response.data) {
+    return response.data;
+  } else {
+    console.error("Unexpected create role response:", response);
+    throw new Error("Invalid response format from create role API");
+  }
+}
+
 export async function updateRole(
   systemSlug: string,
   sectionSlug: string,
@@ -138,6 +173,7 @@ export async function updateRole(
     name: string; 
     introduction?: string; 
     hp_dice?: string;
+    primaryAbility?: string;
     backgroundImageId?: string | null; 
     images?: Array<{ imageId: string; orderby: number }> 
   }
@@ -148,10 +184,95 @@ export async function updateRole(
     body: JSON.stringify(roleData),
   });
   
-  if (!res.ok) throw Error(`Failed updating Role ${sectionSlug}`);
+  if (!res.ok) {
+    const errorText = await res.text();
+    console.error("Update role API error:", res.status, errorText);
+    throw Error(`Failed updating Role ${sectionSlug}: ${res.status} - ${errorText}`);
+  }
 
-  const { data }: { data: RoleType } = await res.json();
-  return data;
+  const { data }: { data: { role: RoleType } } = await res.json();
+  return data.role;
+}
+
+export async function updateRace(
+  systemSlug: string,
+  sectionSlug: string,
+  raceData: { 
+    name: string; 
+    speedWalking?: number;
+    speedFlying?: number;
+    speedSwimming?: number;
+    speedClimbing?: number;
+    speedBurrowing?: number;
+    age?: number;
+    size?: string;
+    languages?: string;
+    backgroundImageId?: string | null; 
+    images?: Array<{ imageId: string; orderby: number }> 
+  }
+): Promise<RaceType> {
+  const res = await fetch(`${API_URL}/systems/${systemSlug}/races/${sectionSlug}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(raceData),
+  });
+  
+  if (!res.ok) {
+    const errorText = await res.text();
+    console.error("Update race API error:", res.status, errorText);
+    throw Error(`Failed updating Race ${sectionSlug}: ${res.status} - ${errorText}`);
+  }
+
+  const { data }: { data: { race: RaceType } } = await res.json();
+  return data.race;
+}
+
+export async function createRace(
+  systemSlug: string,
+  raceData: {
+    name: string;
+    system: string;
+    speedWalking?: number;
+    speedFlying?: number;
+    speedSwimming?: number;
+    speedClimbing?: number;
+    speedBurrowing?: number;
+    age?: number;
+    size?: string;
+    languages?: string;
+    images?: Array<{ imageId: string; orderby: number }>;
+    backgroundImageId?: string | null;
+  }
+): Promise<RaceType> {
+  // Add slug to the race data
+  const raceDataWithSlug = {
+    ...raceData,
+    slug: generateSlug(raceData.name),
+  };
+
+  const res = await fetch(`${API_URL}/systems/${systemSlug}/races`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(raceDataWithSlug),
+  });
+  
+  if (!res.ok) {
+    const errorText = await res.text();
+    console.error("Create race API error:", res.status, errorText);
+    throw Error(`Failed creating Race: ${res.status}`);
+  }
+
+  const response = await res.json();
+  console.log("Create race API response:", response);
+  
+  if (response.data?.race) {
+    return response.data.race;
+  } else if (response.data) {
+    return response.data;
+  } else {
+    console.error("Unexpected create race response:", response);
+    throw new Error("Invalid response format from create race API");
+  }
 }
 
 

@@ -18,15 +18,18 @@ const TextEditor: React.FC<TextEditorProps> = ({
   placeholder = "Enter Text...",
   defaultValue = "",
 }) => {
+  const editorId = `texteditor-${name}`;
+  
   return (
     <div className="flex flex-col">
-      {label && <Label name={name}>{label}</Label>}
+      {label && <Label htmlFor={editorId}>{label}</Label>}
       <Controller
         name={name}
         control={control}
         defaultValue={defaultValue}
         render={({ field: { onChange, value } }) => (
           <Editor
+            id={editorId}
             apiKey="a5kyw7zkfv5lyjk0mb0l14kpfafoyj4zt6qffz67go9kf6vc"
             value={value}
             onEditorChange={(newValue) => onChange(newValue)}

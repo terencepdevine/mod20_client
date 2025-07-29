@@ -1,0 +1,91 @@
+/* Ability Scores Section Component */
+.ability-scores-section {
+  margin-bottom: var(--spacing-6);
+
+  &__title {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+    margin: 0 0 var(--spacing-4) 0;
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+    margin-bottom: var(--spacing-4);
+  }
+
+  &__item {
+    display: flex;
+    align-items: end;
+    gap: var(--spacing-4);
+    padding: var(--spacing-4);
+    border-radius: var(--border-radius-base);
+    background: var(--bg-card);
+    transition: box-shadow 0.2s ease;
+    transform: var(--dnd-transform, none);
+    transition: var(--dnd-transition, box-shadow 0.2s ease);
+
+    &:hover {
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    &--dragging {
+      opacity: 0.5;
+    }
+
+    &-drag-handle {
+      cursor: grab;
+      padding: var(--spacing-2);
+      color: var(--text-secondary);
+      font-size: var(--font-size-lg);
+      flex-shrink: 0;
+
+      &:active {
+        cursor: grabbing;
+      }
+    }
+
+    &-name {
+      flex: 1;
+    }
+
+    &-description {
+      flex: 2;
+    }
+
+    &-actions {
+      flex-shrink: 0;
+      display: flex;
+      align-items: end;
+      margin-top: var(--spacing-6);
+    }
+  }
+
+  &__add-button {
+    display: flex;
+    justify-content: center;
+  }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .ability-scores-section {
+    &__item {
+      flex-direction: column;
+      align-items: stretch;
+      gap: var(--spacing-3);
+
+      &-drag-handle {
+        align-self: flex-start;
+        margin-bottom: var(--spacing-2);
+      }
+
+      &-actions {
+        margin-top: var(--spacing-3);
+        justify-content: flex-end;
+      }
+    }
+  }
+}

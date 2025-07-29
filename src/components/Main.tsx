@@ -7,7 +7,6 @@ const Main: React.FC = () => {
   const introduction = system?.introduction as string;
 
   if (!system) {
-    console.error("System Context is null");
     return <div>Error: System data is missing.</div>;
   }
 

@@ -1,21 +1,57 @@
 import React, { forwardRef } from "react";
-import "./Input.css";
+import Label from "../forms/Label";
+import "./Input.scss";
 
 type InputProps = React.InputHTMLAttributes<HTMLInputElement> & {
   label?: string;
+  description?: string;
   variant?: "default" | "large";
+  error?: boolean;
+  containerClassName?: string;
 };
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ label = "", placeholder = "Enter text...", ...props }, ref) => {
+  (
+    {
+      label,
+      description,
+      placeholder,
+      variant = "default",
+      error = false,
+      containerClassName = "",
+      className = "",
+      ...props
+    },
+    ref,
+  ) => {
+    const inputId =
+      props.id ||
+      props.name ||
+      `input-${Math.random().toString(36).substr(2, 9)}`;
+
+    // Build className for input
+    const inputClasses = [
+      "input",
+      variant === "large" && "input--large",
+      error && "input--error",
+      className,
+    ]
+      .filter(Boolean)
+      .join(" ");
+
     return (
-      <div className="form-group">
-        {label && <label>{label}</label>}
+      <div className={`form-group ${containerClassName}`.trim()}>
+        {label && (
+          <Label htmlFor={inputId} description={description}>
+            {label}
+          </Label>
+        )}
         <input
-          className={`input ${props.variant === "large" && "input--large"}`}
+          id={inputId}
+          className={inputClasses}
           ref={ref}
-          {...props}
           placeholder={placeholder}
+          {...props}
         />
       </div>
     );
@@ -25,43 +61,3 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
 Input.displayName = "Input";
 
 export default Input;
-
-// import React from "react";
-// import Label from "./Label";
-
-// interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-//   label?: string;
-//   variant?: string;
-// }
-
-// const Input = React.forwardRef<HTMLInputElement, InputProps>(
-//   (
-//     {
-//       label = "",
-//       variant = "default",
-//       placeholder = "Enter text...",
-//       type = "text",
-//       name,
-//       defaultValue,
-//       ...rest
-//     },
-//     ref,
-//   ) => {
-//     return (
-//       <div className="flex flex-col">
-//         {label && <Label name={name}>{label}</Label>}
-//         <input
-//           type={type}
-//           id={name}
-//           defaultValue={defaultValue}
-//           placeholder={placeholder}
-//           ref={ref}
-//           className={`rounded-lg bg-gray-900 p-4 outline-hidden transition-all hover:bg-gray-850 focus:bg-gray-850 ${variant === "large" && "text-2xl"}`}
-//           {...rest}
-//         />
-//       </div>
-//     );
-//   },
-// );
-
-// export default Input;

@@ -79,8 +79,11 @@
   --color-gray-600: #4b5563;
   --color-gray-700: #374151;
   --color-gray-800: #1f2937;
+  --color-gray-850: #18202f;
   --color-gray-900: #111827;
+  --color-gray-925: #0c111d;
   --color-gray-950: #030712;
+  --color-gray-975: #02040a;
 
   /* Slate */
   --color-slate-50: #f8fafc;
@@ -317,20 +320,25 @@
   --color-rose-950: #4c0519;
 
   /* Theme Variables - Default (Dark Mode) */
-  --bg-page: var(--color-gray-950);
-  --bg-card: var(--color-gray-900);
-  --bg-input: var(--color-gray-900);
-  --bg-sidebar: var(--color-gray-900);
+  --bg-page: var(--color-gray-975);
+  --bg-card: var(--color-gray-925);
+  --bg-input: var(--color-gray-925);
+  --bg-sidebar: var(--color-gray-925);
   --bg-sidebar-item: var(--color-gray-800);
   --bg-sidebar-item-active: var(--color-gray-950);
   --bg-loading: var(--color-gray-900);
   --bg-hero: var(--color-gray-900);
-  --text-primary: var(--color-gray-100);
-  --text-secondary: var(--color-gray-300);
+  --text-primary: var(--color-gray-200);
+  --text-secondary: var(--color-gray-400);
   --text-tertiary: var(--color-gray-400);
+  --text-disabled: var(--color-gray-600);
   --scrollbar-track: var(--color-gray-900);
   --scrollbar-thumb: var(--color-gray-800);
   --border-color: var(--color-gray-700);
+  --border-disabled: var(--color-gray-600);
+
+  /* Icon Colors */
+  --icon-color-disabled: #4b5563;
 }
 
 /* Light Theme */

@@ -23,7 +23,7 @@ button {
   align-items: center;
   justify-content: center;
   color: var(--color-primary-50);
-  gap: var(--spacing-4);
+  gap: var(--spacing-2);
   padding: var(--spacing-2);
   background-color: var(--color-primary-600);
   border: none;
@@ -31,6 +31,24 @@ button {
 
   &.button--full {
     width: 100%;
+  }
+
+  &.button--outline {
+    background: transparent;
+    border: 1px solid var(--color-primary-500);
+    color: var(--color-primary-50);
+    svg {
+      color: var(--color-primary-500);
+    }
+  }
+
+  &:disabled {
+    color: var(--text-disabled);
+    border-color: var(--border-disabled);
+    cursor: not-allowed;
+    svg {
+      color: var(--icon-color-disabled);
+    }
   }
 }
 
@@ -89,3 +107,39 @@ h6 {
   width: 100%;
   height: auto;
 }
+
+/* Icon Sizing Utilities */
+.w-3 {
+  width: 0.75rem;
+} /* 12px */
+.h-3 {
+  height: 0.75rem;
+} /* 12px */
+
+.w-4 {
+  width: 1rem;
+} /* 16px */
+.h-4 {
+  height: 1rem;
+} /* 16px */
+
+.w-5 {
+  width: 1.25rem;
+} /* 20px */
+.h-5 {
+  height: 1.25rem;
+} /* 20px */
+
+.w-6 {
+  width: 1.5rem;
+} /* 24px */
+.h-6 {
+  height: 1.5rem;
+} /* 24px */
+
+.w-8 {
+  width: 2rem;
+} /* 32px */
+.h-8 {
+  height: 2rem;
+} /* 32px */

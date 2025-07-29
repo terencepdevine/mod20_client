@@ -1,6 +1,6 @@
 .textarea {
   background-color: var(--bg-input);
-  border: 1px solid var(--border-color);
+  border: none;
   border-radius: var(--border-radius-base);
   padding: var(--spacing-4);
   color: var(--text-primary);
