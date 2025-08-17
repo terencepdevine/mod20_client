@@ -25,11 +25,11 @@ const AdminSystemNew: React.FC = () => {
     id: "",
     slug: "",
     name: "",
-    version: "",
     introduction: "",
     createdAt: undefined,
     updatedAt: undefined,
     abilities: [],
+    skills: [],
     character: {} as any, // Empty object as placeholder
     isNew: true,
     // Image fields - these will be mutated directly
@@ -44,15 +44,16 @@ const AdminSystemNew: React.FC = () => {
     return Promise.resolve({ [fieldKey]: value });
   };
 
-  // Simple format function for abilities (empty array for new system)
+  // Simple format functions for abilities and skills (empty arrays for new system)
   const formatAbilitiesForForm = (abilities: any[]) => {
     return abilities || [];
   };
 
-  // Show loading state while creating to prevent flash
-  if (isCreating) {
-    return <div className="loading-state">Creating system...</div>;
+  const formatSkillsForForm = (skills: any[]) => {
+    return skills || [];
   };
+
+  // Keep form visible during creation - AdminSystemForm will handle the creating state
 
   return (
     <MediaLibraryProvider
@@ -69,6 +70,7 @@ const AdminSystemNew: React.FC = () => {
         optimisticData={null}
         onSubmit={handleFormSubmit}
         formatAbilitiesForForm={formatAbilitiesForForm}
+        formatSkillsForForm={formatSkillsForForm}
       />
     </MediaLibraryProvider>
   );

@@ -1,6 +1,7 @@
 import React, { forwardRef } from "react";
+import FormGroup from "../FormGroup/FormGroup";
 import Label from "../Label/Label";
-import "./Select.css";
+import "./Select.scss";
 
 export interface SelectOption {
   value: string;
@@ -22,7 +23,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
       `select-${Math.random().toString(36).substr(2, 9)}`;
 
     return (
-      <div className="form-group">
+      <FormGroup>
         {label && <Label htmlFor={selectId}>{label}</Label>}
         <select
           id={selectId}
@@ -41,7 +42,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
             </option>
           ))}
         </select>
-      </div>
+      </FormGroup>
     );
   },
 );

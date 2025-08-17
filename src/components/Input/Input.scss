@@ -1,9 +1,5 @@
-.form-group {
-  display: flex;
-  flex-direction: column;
-}
-
 .input {
+  width: 100%;
   background-color: var(--bg-input);
   border: none;
   border-radius: var(--border-radius-base);
@@ -17,5 +13,9 @@
   &:focus {
     outline: none;
     border-color: var(--color-primary-500);
+  }
+
+  &.input--lg {
+    font-size: var(--font-size-xl);
   }
 }

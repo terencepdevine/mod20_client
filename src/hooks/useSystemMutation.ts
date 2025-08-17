@@ -37,13 +37,14 @@ export const useSystemMutation = (systemSlug: string) => {
     onSuccess: (_data, variables) => {
       const { newSystem, systemSlug } = variables;
       toast("System Updated");
-      setOptimisticData(newSystem);
+      // Don't set optimistic data on success - let the server response populate the form
       
       // Handle slug-based redirect
       if (newSystem.name) {
         const newSlug = generateSlug(newSystem.name);
         if (newSlug !== systemSlug) {
-          navigate(`/admin/systems/${newSlug}`);
+          // Replace history entry to prevent navigation to non-existent old slug
+          navigate(`/admin/systems/${newSlug}`, { replace: true });
           return;
         }
       }

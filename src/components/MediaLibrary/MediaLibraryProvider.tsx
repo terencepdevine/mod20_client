@@ -84,7 +84,7 @@ export const MediaLibraryProvider: React.FC<MediaLibraryProviderProps> = ({
         onAddImage={handleModalAddImage}
         onRemoveImage={handleModalRemoveImage}
         onDeleteImage={handleImageDelete}
-        onUpload={uploadToMediaLibraryMutation}
+        onUpload={(files: File[]) => uploadToMediaLibraryMutation({ files, imageType: modalState.config?.type })}
         isLoadingImages={isLoadingImages}
         imagesError={imagesError}
         isUploading={isUploading}

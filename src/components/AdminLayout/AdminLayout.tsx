@@ -2,12 +2,13 @@ import { Outlet, useParams, Link, useLocation } from "react-router-dom";
 import { SystemProvider } from "../../provider/SystemProvider";
 import { useSystem } from "../../hooks/useProvider";
 import "./AdminLayout.scss";
+import Button from "../Button/Button";
+import { RaceType, RoleType } from "@mod20/types";
 
 const AdminLayout: React.FC = () => {
   const location = useLocation();
   const { systemSlug } = useParams<{ systemSlug: string }>();
 
-  // Check if we're on a system-specific route
   const isSystemRoute =
     location.pathname.includes("/systems/") &&
     systemSlug &&
@@ -65,28 +66,29 @@ const Sidebar: React.FC = () => {
 
   return (
     <aside className="sidebar">
-      <div className="sidebar-section">
+      <div className="sidebar__section">
+        <Link to={`/admin/systems`}>← Back to Systems</Link>
         <h2>System: {system.name}</h2>
         <nav>
           <ul>
             <li>
               <Link to={`/admin/systems/${systemSlug}`}>System Settings</Link>
             </li>
-            <li>
-              <Link to={`/admin/systems`}>← Back to Systems</Link>
-            </li>
+            <li></li>
           </ul>
         </nav>
       </div>
 
-      {/* Roles Section */}
-      <div className="sidebar-section">
+      <div className="sidebar__section">
         <h3>Roles</h3>
-        <nav>
-          <ul>
-            {system.character?.roles?.map((role: any) => (
-              <li key={role.slug}>
-                <Link to={`/admin/systems/${systemSlug}/roles/${role.slug}`}>
+        <nav className="sidebar__nav">
+          <ul className="sidebar__nav-list">
+            {system.character?.roles?.map((role: RoleType) => (
+              <li key={role.slug} className="sidebar__nav-item">
+                <Link
+                  to={`/admin/systems/${systemSlug}/roles/${role.slug}`}
+                  className="sidebar__nav-link"
+                >
                   {role.name}
                 </Link>
               </li>
@@ -96,20 +98,22 @@ const Sidebar: React.FC = () => {
               <li>No roles available</li>
             )}
             <li>
-              <Link to={`/admin/systems/${systemSlug}/roles/new`}>
+              <Button
+                to={`/admin/systems/${systemSlug}/roles/new`}
+                variant="outline"
+              >
                 + Add Role
-              </Link>
+              </Button>
             </li>
           </ul>
         </nav>
       </div>
 
-      {/* Races Section */}
-      <div className="sidebar-section">
+      <div className="sidebar__section">
         <h3>Races</h3>
         <nav>
           <ul>
-            {system.character?.races?.map((race: any) => (
+            {system.character?.races?.map((race: RaceType) => (
               <li key={race.slug}>
                 <Link to={`/admin/systems/${systemSlug}/races/${race.slug}`}>
                   {race.name}
@@ -121,23 +125,36 @@ const Sidebar: React.FC = () => {
               <li>No races available</li>
             )}
             <li>
-              <Link to={`/admin/systems/${systemSlug}/races/new`}>
+              <Button
+                to={`/admin/systems/${systemSlug}/races/new`}
+                variant="outline"
+              >
                 + Add Race
-              </Link>
+              </Button>
             </li>
           </ul>
         </nav>
       </div>
 
-      {/* System Info */}
-      <div className="sidebar-section">
-        <h4>System Info</h4>
-        <p>
-          <strong>Version:</strong> {system.version || "N/A"}
-        </p>
-        <p>
-          <strong>Slug:</strong> {system.slug}
-        </p>
+      <div className="sidebar__section">
+        <h3>Traits</h3>
+        <nav>
+          <ul>
+            <li>
+              <Link to={`/admin/systems/${systemSlug}/traits`}>
+                Manage Traits
+              </Link>
+            </li>
+            <li>
+              <Button
+                to={`/admin/systems/${systemSlug}/traits/new`}
+                variant="outline"
+              >
+                + Add Trait
+              </Button>
+            </li>
+          </ul>
+        </nav>
       </div>
     </aside>
   );

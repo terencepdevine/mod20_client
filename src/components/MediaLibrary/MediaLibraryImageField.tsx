@@ -9,6 +9,7 @@ import {
   XMarkIcon,
 } from "@heroicons/react/16/solid";
 import "./MediaLibraryImageField.scss";
+import { getImageUrl } from "../../utils/imageUtils";
 import {
   DndContext,
   closestCenter,
@@ -26,12 +27,10 @@ import {
   useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import FormGroup from "../FormGroup";
+import Card from "../Card/Card";
 
-// Helper function to get image URL
-const getImageUrl = (filename: string) => {
-  if (!filename) return "";
-  return `http://localhost:3000/public/img/media/${filename}`;
-};
+// Helper function to get image URL (now imported from utils)
 
 // Sortable Image Item Component
 const SortableImageItem: React.FC<{
@@ -84,7 +83,7 @@ const SortableImageItem: React.FC<{
         <Bars2Icon />
       </div>
       <img
-        src={getImageUrl(image.filename)}
+        src={getImageUrl(image.filename, 'gallery')}
         alt={image.alt || `Image ${index + 1}`}
         className="media-field__item-image"
       />
@@ -174,49 +173,49 @@ export const MediaLibraryImageField: React.FC<MediaLibraryImageFieldProps> = ({
 
     return (
       <div className="media-field media-field--single">
-        <div className="media-field__label">
-          <Label
-            htmlFor={fieldId}
-            variant="media-field"
-            description={description}
-          >
+        <FormGroup>
+          <Label htmlFor={fieldId} description={description}>
             {label}
           </Label>
-        </div>
 
-        {image ? (
-          <div className="media-field__container">
-            <div className="media-field__image-wrapper">
-              <img
-                src={getImageUrl(image.filename)}
-                alt={image.alt || label}
-                className="media-field__image"
-              />
-              <button
-                onClick={() => handleRemove(image.id)}
-                className="media-field__remove-btn"
-                disabled={isUpdating}
-              >
-                <XMarkIcon />
-              </button>
-            </div>
-            <div className="media-field__title">
-              {image.alt || image.filename || "Untitled"}
-            </div>
-          </div>
-        ) : (
-          <div className="media-field__empty">
+          <Card className="media-field__content">
+            {image ? (
+              <>
+                <img
+                  src={getImageUrl(image.filename, type as 'gallery' | 'background')}
+                  alt={image.alt || label}
+                  className="media-field__image"
+                />
+                <div className="media-field__title-wrapper">
+                  <div className="media-field__title">
+                    {image.alt || image.filename || "Untitled"}
+                  </div>
+                  <button
+                    onClick={() => handleRemove(image.id)}
+                    className="media-field__remove-btn"
+                    disabled={isUpdating}
+                  >
+                    <XMarkIcon />
+                  </button>
+                </div>
+              </>
+            ) : (
+              <div className="media-field__empty">
+                <p>No image added</p>
+              </div>
+            )}
             <Button
               id={fieldId}
               onClick={handleAdd}
-              disabled={isUpdating}
+              disabled={isUpdating || !!image}
               variant="outline"
               type="button"
+              width="full"
             >
-              Add {label}
+              Add {label} <ArrowUpTrayIcon className="w-4 h-4 fill-primary" />
             </Button>
-          </div>
-        )}
+          </Card>
+        </FormGroup>
       </div>
     );
   }
@@ -226,55 +225,55 @@ export const MediaLibraryImageField: React.FC<MediaLibraryImageFieldProps> = ({
 
   return (
     <div className="media-field media-field--multiple">
-      <div className="media-field__label">
-        <Label
-          htmlFor={multipleFieldId}
-          variant="media-field"
-          description={description}
-        >
-          {label}
-        </Label>
-      </div>
-
-      <div className="media-field__list">
-        {currentImages.length > 0 ? (
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-          >
-            <SortableContext
-              items={currentImages.map((img) => img.id)}
-              strategy={verticalListSortingStrategy}
-            >
-              {currentImages.map((image, index) => (
-                <SortableImageItem
-                  key={image.id}
-                  image={image}
-                  index={index}
-                  handleRemove={handleRemove}
-                  isUpdating={isUpdating}
-                />
-              ))}
-            </SortableContext>
-          </DndContext>
-        ) : (
-          <div className="media-field__empty">
-            <p>No images added yet</p>
-          </div>
+      <FormGroup>
+        {label && (
+          <Label htmlFor={multipleFieldId} description={description}>
+            {label}
+          </Label>
         )}
-        <Button
-          id={multipleFieldId}
-          onClick={handleAdd}
-          variant="outline"
-          disabled={
-            isUpdating || (maxCount ? currentImages.length >= maxCount : false)
-          }
-          type="button"
-        >
-          Add Images <ArrowUpTrayIcon className="w-4 h-4 fill-primary" />
-        </Button>
-      </div>
+
+        <Card className="media-field__content">
+          {currentImages.length > 0 ? (
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+            >
+              <SortableContext
+                items={currentImages.map((img) => img.id)}
+                strategy={verticalListSortingStrategy}
+              >
+                {currentImages.map((image, index) => (
+                  <SortableImageItem
+                    key={image.id}
+                    image={image}
+                    index={index}
+                    handleRemove={handleRemove}
+                    isUpdating={isUpdating}
+                  />
+                ))}
+              </SortableContext>
+            </DndContext>
+          ) : (
+            <div className="media-field__empty">
+              <p>No images added</p>
+            </div>
+          )}
+          <Button
+            id={multipleFieldId}
+            onClick={handleAdd}
+            variant="outline"
+            disabled={
+              isUpdating ||
+              (maxCount ? currentImages.length >= maxCount : false)
+            }
+            type="button"
+            width="full"
+          >
+            Add Images <ArrowUpTrayIcon className="w-4 h-4 fill-primary" />
+          </Button>
+        </Card>
+      </FormGroup>
     </div>
   );
 };

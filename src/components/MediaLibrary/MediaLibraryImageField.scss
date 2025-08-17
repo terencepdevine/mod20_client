@@ -1,30 +1,18 @@
-/* Media Field Component */
 .media-field {
-  margin-bottom: var(--spacing-6);
-
-  &__description {
-    font-size: var(--font-size-sm);
-    color: var(--text-secondary);
-    margin: 0 0 var(--spacing-3) 0;
-    font-style: italic;
-  }
-
   &__empty {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: var(--spacing-6) var(--spacing-4);
-    border-radius: var(--border-radius-base);
-    background: var(--bg-input);
+    padding: var(--spacing-4);
+    color: var(--text-secondary);
+    font-style: italic;
+    font-size: var(--font-size-sm);
   }
 
-  &__list {
+  &__content {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-3);
-    background: var(--bg-card);
-    padding: var(--spacing-2);
-    border-radius: var(--border-radius-base);
+    gap: var(--spacing-2);
   }
 
   &__item {
@@ -138,37 +126,19 @@
 
   /* Single Image Field Modifier */
   &--single {
-    .media-field__container {
-      display: flex;
-      flex-direction: column;
-      gap: var(--spacing-3);
-    }
-
-    .media-field__image-wrapper {
-      position: relative;
-      width: 100%;
-      border-radius: var(--border-radius-base);
-      overflow: hidden;
-      background: var(--bg-input);
-    }
-
     .media-field__image {
       width: 100%;
       height: auto;
       display: block;
-      min-height: 200px;
-      object-fit: cover;
     }
 
     .media-field__remove-btn {
-      position: absolute;
-      top: var(--spacing-2);
-      right: var(--spacing-2);
-      width: 1.5rem;
-      height: 1.5rem;
-      border-radius: 50%;
+      width: 1.75rem;
+      height: 1.75rem;
+      border-radius: var(--border-radius-sm);
       color: var(--icon-disabled);
       border: none;
+      background-color: transparent;
       cursor: pointer;
       font-size: var(--font-size-lg);
       font-weight: var(--font-weight-bold);
@@ -190,57 +160,36 @@
         opacity: 0.5;
         cursor: not-allowed;
       }
+      &:hover:not(:disabled) {
+        background: var(--color-red-600);
+        svg {
+          color: var(--color-red-50);
+        }
+      }
     }
-
+    .media-field__title-wrapper {
+      padding: var(--spacing-1) 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
     .media-field__title {
-      font-size: var(--font-size-base);
-      font-weight: var(--font-weight-medium);
-      color: var(--text-primary);
-      text-align: center;
-      padding: var(--spacing-2);
-      background: var(--bg-card);
-      border-radius: var(--border-radius-base);
+      font-size: var(--font-size-sm);
+      font-style: italic;
+      color: var(--text-secondary);
       word-break: break-word;
-    }
-
-    .media-field__empty {
-      padding: var(--spacing-8) var(--spacing-4);
     }
   }
 
   /* Multiple Images Field Modifier */
   &--multiple {
-    .media-field__header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: var(--spacing-2);
-    }
-
-    .media-field__header-content {
-      flex: 1;
-    }
-
-    .media-field__empty {
-      text-align: center;
-      color: var(--text-secondary);
-
-      p {
-        margin: 0;
-        font-style: italic;
-      }
-    }
+    // Multiple field specific styles can be added here
   }
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .media-field--multiple {
-    .media-field__header {
-      flex-direction: column;
-      align-items: stretch;
-    }
-
     .media-field__item {
       // Keep horizontal layout even on mobile since images are small (32px)
       gap: var(--spacing-3);

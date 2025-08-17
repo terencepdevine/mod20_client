@@ -2,7 +2,6 @@
 @import "./css/variables/variables.scss";
 @import "./css/base/scrollbar.scss";
 @import "./css/base/typography.scss";
-@import "./css/utilities/layout.scss";
 
 .bg-page {
   background: var(--bg-page);

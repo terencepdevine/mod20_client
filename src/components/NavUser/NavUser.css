@@ -20,6 +20,7 @@
 
 .nav-user__list {
   position: absolute;
+  z-index: 99;
   right: 0;
   top: calc(100% + var(--spacing-4));
   width: 240px;

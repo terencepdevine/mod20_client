@@ -22,14 +22,21 @@ export const useCreateSystem = () => {
     onSuccess: (createdSystem) => {
       console.log("Create system success - received data:", createdSystem);
       
-      // Invalidate systems query to update the list
-      queryClient.invalidateQueries({
-        queryKey: ["systems"],
-      });
-      
       if (createdSystem && createdSystem.name) {
-        toast.success(`System "${createdSystem.name}" created successfully!`);
         const systemSlug = generateSlug(createdSystem.name);
+        
+        // Pre-populate the query cache with the created system data
+        queryClient.setQueryData(
+          ["system", systemSlug],
+          createdSystem
+        );
+        
+        // Invalidate systems query to update the list
+        queryClient.invalidateQueries({
+          queryKey: ["systems"],
+        });
+        
+        toast.success(`System "${createdSystem.name}" created successfully!`);
         navigate(`/admin/systems/${systemSlug}`);
       } else {
         console.error("System created but invalid response format:", createdSystem);

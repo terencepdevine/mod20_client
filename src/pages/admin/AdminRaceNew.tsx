@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import { useSystem } from "../../hooks/useProvider";
 import { MediaLibraryProvider } from "../../components/MediaLibrary/MediaLibraryProvider";
 import { AdminRaceForm } from "../../components/AdminRaceForm/AdminRaceForm";
+import Loading from "../../components/Loading/Loading";
 import { useCreateRace } from "../../hooks/useCreateRace";
 import { RaceFormData } from "../../types/adminTypes";
 
@@ -21,12 +22,14 @@ const AdminRaceNew: React.FC = () => {
 
   // Loading and error states
   if (systemPending || !system) {
-    return <div className="loading-state">Loading...</div>;
+    return <Loading message="Loading system..." className="content-wrap" />;
   }
   if (isError && error !== null) {
     return (
-      <div className="error-message">
-        Error: {error.message || "Something went wrong"}
+      <div className="content-wrap">
+        <div className="error-message">
+          Error: {error.message || "Something went wrong"}
+        </div>
       </div>
     );
   }
@@ -49,6 +52,7 @@ const AdminRaceNew: React.FC = () => {
   // Create stable race object for the form with image fields
   const [raceData] = useState(() => ({
     name: "",
+    introduction: "",
     speedWalking: undefined,
     speedFlying: undefined,
     speedSwimming: undefined,
@@ -71,10 +75,7 @@ const AdminRaceNew: React.FC = () => {
     return Promise.resolve({ [fieldKey]: value });
   };
 
-  // Show loading state while creating to prevent flash
-  if (isCreating) {
-    return <div className="loading-state">Creating race...</div>;
-  }
+  // Keep form visible during creation - AdminRaceForm will handle the creating state
 
   return (
     <MediaLibraryProvider

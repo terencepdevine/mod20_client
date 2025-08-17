@@ -4,9 +4,9 @@ import Search from "../Search/Search";
 import NavSocial from "../NavSocial/NavSocial";
 import NavMain from "../NavMain/NavMain";
 import IconD20 from "../IconD20/IconD20";
+import NavUser from "../NavUser/NavUser";
 
 import "./Header.scss";
-import NavUser from "../NavUser/NavUser";
 
 const Header: React.FC = () => {
   return (

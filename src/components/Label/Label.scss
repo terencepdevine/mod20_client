@@ -1,1 +1,15 @@
-// Label component styles
+.label {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-05);
+  font-style: italic;
+  &__text {
+    font-size: var(--font-size-sm);
+    color: var(--text-primary);
+  }
+
+  &__description {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+  }
+}

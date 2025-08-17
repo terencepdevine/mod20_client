@@ -1,0 +1,1 @@
+export { AdminTraitForm } from './AdminTraitForm';

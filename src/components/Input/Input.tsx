@@ -1,11 +1,12 @@
 import React, { forwardRef } from "react";
+import FormGroup from "../FormGroup/FormGroup";
 import Label from "../Label/Label";
 import "./Input.scss";
 
 type InputProps = React.InputHTMLAttributes<HTMLInputElement> & {
   label?: string;
   description?: string;
-  variant?: "default" | "large";
+  variant?: "default" | "lg";
   error?: boolean;
   containerClassName?: string;
 };
@@ -32,7 +33,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     // Build className for input
     const inputClasses = [
       "input",
-      variant === "large" && "input--large",
+      variant === "lg" && "input--lg",
       error && "input--error",
       className,
     ]
@@ -40,7 +41,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       .join(" ");
 
     return (
-      <div className={`form-group ${containerClassName}`.trim()}>
+      <FormGroup className={containerClassName}>
         {label && (
           <Label htmlFor={inputId} description={description}>
             {label}
@@ -53,7 +54,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           placeholder={placeholder}
           {...props}
         />
-      </div>
+      </FormGroup>
     );
   },
 );

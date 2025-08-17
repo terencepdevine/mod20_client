@@ -1,35 +1,41 @@
 import { RoleProvider } from "../../provider/RoleProvider";
+import { SystemProvider } from "../../provider/SystemProvider";
 import Hero from "../../components/Hero/Hero";
 import ImageGallery from "../../components/ImageGallery/ImageGallery";
-import { useRole } from "../../hooks/useProvider";
+import { useRole, useSystem } from "../../hooks/useProvider";
 import { Link, useParams } from "react-router-dom";
 import { RoleType, ImageType } from "@mod20/types";
 import { joinWithComma } from "../../utils/joinWithComma";
 import { useQuery } from "@tanstack/react-query";
 import { getImages } from "../../services/apiSystem";
+import { getImageUrl } from "../../utils/imageUtils";
 import "./Role.css";
 
 const Role: React.FC = () => {
   const { systemSlug, sectionSlug } = useParams();
 
   return (
-    <RoleProvider
-      systemSlug={systemSlug as string}
-      sectionSlug={sectionSlug as string}
-    >
-      <RoleContent />
-    </RoleProvider>
+    <SystemProvider systemSlug={systemSlug as string}>
+      <RoleProvider
+        systemSlug={systemSlug as string}
+        sectionSlug={sectionSlug as string}
+      >
+        <RoleContent />
+      </RoleProvider>
+    </SystemProvider>
   );
 };
 
 const RoleContent: React.FC = () => {
   const { data, isPending, isError, error } = useRole();
+  const { data: systemData } = useSystem();
   const role = data as RoleType;
 
   // Query for media library images to resolve Image IDs
   const { data: allImages = [] } = useQuery({
-    queryKey: ["images"],
-    queryFn: getImages,
+    queryKey: ["images", systemData?.id],
+    queryFn: () => getImages(systemData?.id),
+    enabled: !!systemData?.id,
   });
 
   if (isPending) return <h1>Loading...</h1>;
@@ -41,35 +47,51 @@ const RoleContent: React.FC = () => {
     return <div>Error: Role data is missing.</div>;
   }
 
-  // Helper function to get role images from media library
+  // Helper function to find image by ID from media library
+  const findImageById = (imageId: string): ImageType | undefined => {
+    return allImages.find((img) => img.id === imageId);
+  };
+
+  // Helper function to get role gallery images
   const getRoleImages = (): ImageType[] => {
     if (!role?.images || !allImages.length) return [];
     const orderedImages = role.images.sort((a, b) => a.orderby - b.orderby);
     return orderedImages
-      .map((item) => allImages.find((img) => img.id === item.imageId))
+      .map((item) => findImageById(item.imageId))
       .filter(Boolean) as ImageType[];
+  };
+
+  // Helper function to get background image
+  const getBackgroundImage = (): ImageType | null => {
+    if (!role?.backgroundImageId || !allImages.length) return null;
+    return findImageById(role.backgroundImageId) || null;
+  };
+
+
+  // Get background image URL for Hero component (role first, then system fallback)
+  const getBackgroundImageUrl = (): string | undefined => {
+    // First try role's background image
+    const roleBackgroundImage = getBackgroundImage();
+    if (roleBackgroundImage) {
+      return `${getImageUrl(roleBackgroundImage.filename, 'background')}?t=${Date.now()}`;
+    }
+    
+    // Fallback to system's background image
+    if (systemData?.backgroundImageId && allImages.length) {
+      const systemBackgroundImage = findImageById(systemData.backgroundImageId);
+      if (systemBackgroundImage) {
+        return `${getImageUrl(systemBackgroundImage.filename, 'background')}?t=${Date.now()}`;
+      }
+    }
+    
+    return undefined;
   };
 
   return (
     <div className="content-wrap">
-      <Hero name={role.name} />
+      <Hero name={role.name} backgroundImage={getBackgroundImageUrl()} />
       <div className="content">
         <div className="content__main wysiwyg">
-          {(() => {
-            const roleImages = getRoleImages();
-            return (
-              roleImages.length > 0 && (
-                <ImageGallery
-                  images={roleImages.map(
-                    (img) =>
-                      `http://localhost:3000/public/img/media/${img.filename}`,
-                  )}
-                  basePath=""
-                  alt={`${role.name} images`}
-                />
-              )
-            );
-          })()}
 
           {role.introduction && (
             <div
@@ -128,7 +150,7 @@ const RoleContent: React.FC = () => {
               <p>
                 <strong>Saving Throws: </strong>
                 {role.savingThrows
-                  ? joinWithComma(role.savingThrows.map((item) => item.name))
+                  ? joinWithComma(role.savingThrows)
                   : "None"}
               </p>
             )}
@@ -136,16 +158,32 @@ const RoleContent: React.FC = () => {
               <p>
                 <strong>Skills: </strong>
                 {role.skills
-                  ? joinWithComma(role.skills.map((item) => item.name))
+                  ? joinWithComma(role.skills.map((item) => 
+                      item.relatedAbility 
+                        ? `${item.name} (${item.relatedAbility.name})`
+                        : item.name
+                    ))
                   : "None"}
               </p>
             )}
           </div>
         </div>
         <div className="content__sidebar">
-          <div>
-            <h3>Sidebar Content</h3>
-          </div>
+          {/* Featured Images Gallery */}
+          {(() => {
+            const roleImages = getRoleImages();
+            return (
+              roleImages.length > 0 && (
+                <ImageGallery
+                  images={roleImages.map(
+                    (img) => getImageUrl(img.filename, 'gallery')
+                  )}
+                  basePath=""
+                  alt={`${role.name} images`}
+                />
+              )
+            );
+          })()}
           <div className="nav-page-wrap">
             <nav className="nav-page">
               <h4>On This Page</h4>

@@ -25,7 +25,7 @@
   }
 
   &.button--lg {
-    padding: var(--spacing-2) var(--spacing-6);
+    padding: var(--spacing-3) var(--spacing-6);
     font-size: var(--font-size-lg);
     font-weight: var(--font-weight-bold);
   }
@@ -47,6 +47,12 @@
     color: var(--color-primary-50);
     svg {
       color: var(--color-primary-500);
+    }
+    &:hover:not(:disabled) {
+      background-color: transparent;
+      background-color: rgba(0, 0, 0, 0.2);
+      border-color: var(--color-primary-100);
+      // color: var(--color-primary-400);
     }
   }
 

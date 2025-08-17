@@ -22,10 +22,10 @@ export async function getSystems(): Promise<SystemType[]> {
 export async function createEditSystem(
   newSystem: {
     name: string;
-    version?: string;
     introduction?: string;
     backgroundImageId?: string | null;
-    abilities?: Array<{ name: string; description?: string }>;
+    abilities?: Array<{ name: string; description?: string; order?: number }>;
+    skills?: Array<{ name: string; description?: string; relatedAbility?: string }>;
   },
   systemSlug?: string,
 ): Promise<SystemType> {
@@ -167,7 +167,6 @@ export async function createRole(
   }
 
   const response = await res.json();
-  console.log("Create role API response:", response);
   
   if (response.data?.role) {
     return response.data.role;
@@ -237,7 +236,8 @@ export async function updateRace(
     size?: string;
     languages?: string;
     backgroundImageId?: string | null; 
-    images?: Array<{ imageId: string; orderby: number }> 
+    images?: Array<{ imageId: string; orderby: number }>;
+    traits?: Array<{ trait: string; order?: number }>;
   }
 ): Promise<RaceType> {
   const res = await fetch(`${API_URL}/systems/${systemSlug}/races/${sectionSlug}`, {
@@ -308,7 +308,6 @@ export async function createRace(
   }
 
   const response = await res.json();
-  console.log("Create race API response:", response);
   
   if (response.data?.race) {
     return response.data.race;
@@ -327,13 +326,10 @@ export async function getImages(systemId?: string): Promise<ImageType[]> {
     const url = systemId 
       ? `${API_URL}/images?systemId=${systemId}`
       : `${API_URL}/images`;
-    console.log('getImages: Fetching images with URL:', url);
-    console.log('getImages: systemId parameter:', systemId);
     const res = await fetch(url);
     
     if (!res.ok) {
       if (res.status === 404) {
-        console.warn("Media library endpoint not found, returning empty array");
         return [];
       }
       throw Error(`Failed getting images from media library: ${res.status} ${res.statusText}`);
@@ -343,13 +339,10 @@ export async function getImages(systemId?: string): Promise<ImageType[]> {
     
     // Handle different response structures
     if (responseData.data && responseData.data.images && Array.isArray(responseData.data.images)) {
-      // Structure: { data: { images: [...] } }
       return responseData.data.images;
     } else if (responseData.data && Array.isArray(responseData.data)) {
-      // Structure: { data: [...] }
       return responseData.data;
     } else if (Array.isArray(responseData)) {
-      // Direct array structure
       return responseData;
     } else {
       return [];

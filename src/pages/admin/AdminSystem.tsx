@@ -9,6 +9,7 @@ import { useSystemMutation } from "../../hooks/useSystemMutation";
 import { useDeleteSystem } from "../../hooks/useDeleteSystem";
 import {
   formatAbilitiesForForm,
+  formatSkillsForForm,
   mergeLocalChanges,
 } from "../../utils/formUtils";
 import { SystemFormData } from "../../types/adminTypes";
@@ -69,7 +70,7 @@ const AdminSystemContent: React.FC = () => {
         optimisticData={optimisticData}
         onSubmit={handleFormSubmit}
         formatAbilitiesForForm={formatAbilitiesForForm}
-        newRoleLink={`/admin/systems/${systemSlug}/roles/new`}
+        formatSkillsForForm={formatSkillsForForm}
         systemSlug={systemSlug}
         onDelete={handleDelete}
         isDeleting={isDeleting}

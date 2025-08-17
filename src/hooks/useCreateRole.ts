@@ -23,14 +23,21 @@ export const useCreateRole = (systemSlug: string) => {
     onSuccess: (createdRole) => {
       console.log("Create role success - received data:", createdRole);
       
-      // Invalidate the system query to refresh sidebar navigation
-      queryClient.invalidateQueries({
-        queryKey: ["system", systemSlug],
-      });
-      
       if (createdRole && createdRole.name) {
-        toast.success(`Role "${createdRole.name}" created successfully!`);
         const roleSlug = generateSlug(createdRole.name);
+        
+        // Pre-populate the query cache with the created role data
+        queryClient.setQueryData(
+          ["role", systemSlug, roleSlug],
+          createdRole
+        );
+        
+        // Invalidate the system query to refresh sidebar navigation
+        queryClient.invalidateQueries({
+          queryKey: ["system", systemSlug],
+        });
+        
+        toast.success(`Role "${createdRole.name}" created successfully!`);
         navigate(`/admin/systems/${systemSlug}/roles/${roleSlug}`);
       } else {
         console.error("Role created but invalid response format:", createdRole);

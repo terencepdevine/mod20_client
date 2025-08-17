@@ -46,7 +46,7 @@ const AdminRoleContent: React.FC = () => {
   } = useRoleMutation(systemSlug as string, sectionSlug as string);
 
   const { mutate: deleteRole, isPending: isDeleting } = useDeleteRole(
-    systemSlug as string
+    systemSlug as string,
   );
 
   // Loading and error states
@@ -80,6 +80,8 @@ const AdminRoleContent: React.FC = () => {
   const handleDelete = () => {
     deleteRole({ sectionSlug: sectionSlug as string });
   };
+
+  console.log("System ID:", system.id);
 
   return (
     <MediaLibraryProvider

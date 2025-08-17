@@ -13,7 +13,7 @@ export const HIT_DICE_OPTIONS: SelectOption[] = [
  */
 export const createAbilityOptions = (abilities: any[]): SelectOption[] => {
   return abilities?.map((ability: any) => ({
-    value: ability._id,
+    value: ability.id,
     label: ability.name,
   })) || [];
 };

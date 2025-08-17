@@ -1,9 +1,9 @@
 .admin-layout {
   width: 100%;
-  height: 100vh;
   overflow-y: auto;
 }
 
 .sidebar {
   background: var(--bg-sidebar);
+  padding: var(--spacing-2);
 }

@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import { useSystem } from "../../hooks/useProvider";
 import { MediaLibraryProvider } from "../../components/MediaLibrary/MediaLibraryProvider";
 import { AdminRoleForm } from "../../components/AdminRoleForm/AdminRoleForm";
+import Loading from "../../components/Loading/Loading";
 import { useCreateRole } from "../../hooks/useCreateRole";
 import { RoleFormData } from "../../types/adminTypes";
 
@@ -21,12 +22,14 @@ const AdminRoleNew: React.FC = () => {
 
   // Loading and error states
   if (systemPending || !system) {
-    return <div className="loading-state">Loading...</div>;
+    return <Loading message="Loading system..." className="content-wrap" />;
   }
   if (isError && error !== null) {
     return (
-      <div className="error-message">
-        Error: {error.message || "Something went wrong"}
+      <div className="content-wrap">
+        <div className="error-message">
+          Error: {error.message || "Something went wrong"}
+        </div>
       </div>
     );
   }
@@ -67,10 +70,7 @@ const AdminRoleNew: React.FC = () => {
     return Promise.resolve({ [fieldKey]: value });
   };
 
-  // Show loading state while creating to prevent flash
-  if (isCreating) {
-    return <div className="loading-state">Creating role...</div>;
-  }
+  // Keep form visible during creation - AdminRoleForm will handle the creating state
 
   return (
     <MediaLibraryProvider

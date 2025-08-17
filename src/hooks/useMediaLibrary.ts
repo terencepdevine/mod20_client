@@ -37,10 +37,14 @@ export const useMediaLibrary = ({
   // No more assigned images calculation - use full library to prevent query-based flashing
 
   // Load media library filtered by system if systemId is provided
+  // For new systems (systemId is undefined), return empty array instead of all images
   const { data: mediaLibraryImages = [], isLoading: isLoadingImages, error: imagesError } = useQuery({
     queryKey: ["images", systemId],
     queryFn: () => {
-      console.log('useMediaLibrary: Loading images for systemId:', systemId);
+      // For new systems without a systemId, return empty array
+      if (!systemId) {
+        return Promise.resolve([]);
+      }
       return getImages(systemId);
     },
     refetchOnWindowFocus: false,
@@ -49,17 +53,17 @@ export const useMediaLibrary = ({
 
   // Mutation for uploading multiple images to media library
   const { mutate: uploadToMediaLibraryMutation, isPending: isUploading } = useMutation({
-    mutationFn: async (files: File[]) => {
+    mutationFn: async ({ files, imageType }: { files: File[], imageType?: string }) => {
       const uploadPromises = files.map(async (file) => {
         const formData = new FormData();
         formData.append("image", file);
         formData.append("alt", `${entityType} image`);
         formData.append("description", `Image for ${entityType}`);
         if (systemId) {
-          console.log('useMediaLibrary: Uploading image with systemId:', systemId);
           formData.append("system", systemId);
-        } else {
-          console.warn('useMediaLibrary: No systemId provided for upload!');
+        }
+        if (imageType) {
+          formData.append("imageType", imageType);
         }
         return await uploadImage(formData);
       });

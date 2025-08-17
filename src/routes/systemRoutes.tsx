@@ -4,13 +4,15 @@ import SystemLayout from "../components/Layout/SystemLayout";
 import System from "../pages/System";
 import Systems from "../pages/Systems";
 import Role from "../pages/Role/Role";
-import Race from "../pages/Race";
+import Race from "../pages/Race/Race";
+import Trait from "../pages/Trait";
 
 import { systemsLoader } from "../loaders/systemsLoader";
 import Roles from "../pages/Roles";
 
 import { roleLoader } from "../loaders/roleLoader";
 import { raceLoader } from "../loaders/raceLoader";
+import { traitLoader } from "../loaders/traitLoader";
 import { rolesLoader } from "../loaders/rolesLoader";
 
 const systemRoutes: RouteObject[] = [
@@ -43,6 +45,11 @@ const systemRoutes: RouteObject[] = [
         path: "races/:sectionSlug",
         element: <Race />,
         loader: raceLoader,
+      },
+      {
+        path: "traits/:sectionSlug",
+        element: <Trait />,
+        loader: traitLoader,
       },
     ],
   },

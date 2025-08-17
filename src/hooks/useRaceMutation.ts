@@ -18,6 +18,7 @@ interface RaceMutationData {
   languages?: string;
   backgroundImageId?: string | null;
   images?: Array<{ imageId: string; orderby: number }>;
+  traits?: Array<{ trait: string; order?: number }>;
 }
 
 /**
@@ -63,7 +64,8 @@ export const useRaceMutation = (systemSlug: string, sectionSlug: string) => {
       if (variables.name) {
         const newSlug = generateSlug(variables.name);
         if (newSlug !== sectionSlug) {
-          navigate(`/admin/systems/${systemSlug}/races/${newSlug}`);
+          // Replace history entry to prevent navigation to non-existent old slug
+          navigate(`/admin/systems/${systemSlug}/races/${newSlug}`, { replace: true });
           return;
         }
       }

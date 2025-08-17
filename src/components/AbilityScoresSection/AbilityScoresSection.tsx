@@ -27,6 +27,7 @@ interface AbilityScoresSectionProps {
   append: (value: {
     name: string;
     description: string;
+    abbr?: string;
     order?: number;
   }) => void;
   move: (fromIndex: number, toIndex: number) => void;
@@ -97,6 +98,14 @@ const SortableAbilityItem: React.FC<SortableAbilityItemProps> = ({
           {...register(`abilities.${index}.name` as const, {
             required: "Ability name is required",
           })}
+        />
+      </div>
+      <div className="ability-scores-section__item-abbr">
+        <Input
+          type="text"
+          placeholder="STR"
+          label={`Ability ${index + 1} Abbreviation`}
+          {...register(`abilities.${index}.abbr` as const)}
         />
       </div>
       <div className="ability-scores-section__item-description">
@@ -188,7 +197,12 @@ const AbilityScoresSection: React.FC<AbilityScoresSectionProps> = ({
           type="button"
           variant="outline"
           onClick={() =>
-            append({ name: "", description: "", order: fields.length })
+            append({
+              name: "",
+              description: "",
+              abbr: "",
+              order: fields.length,
+            })
           }
         >
           Add Ability Score

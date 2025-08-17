@@ -28,14 +28,21 @@ export const useCreateRace = (systemSlug: string) => {
     onSuccess: (createdRace) => {
       console.log("Create race success - received data:", createdRace);
       
-      // Invalidate system query to update sidebar with new race
-      queryClient.invalidateQueries({
-        queryKey: ["system", systemSlug],
-      });
-      
       if (createdRace && createdRace.name) {
-        toast.success(`Race "${createdRace.name}" created successfully!`);
         const raceSlug = generateSlug(createdRace.name);
+        
+        // Pre-populate the query cache with the created race data
+        queryClient.setQueryData(
+          ["race", systemSlug, raceSlug],
+          createdRace
+        );
+        
+        // Invalidate system query to update sidebar with new race
+        queryClient.invalidateQueries({
+          queryKey: ["system", systemSlug],
+        });
+        
+        toast.success(`Race "${createdRace.name}" created successfully!`);
         navigate(`/admin/systems/${systemSlug}/races/${raceSlug}`);
       } else {
         console.error("Race created but invalid response format:", createdRace);

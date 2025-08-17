@@ -2,6 +2,7 @@ import { useContext, Context } from "react";
 
 import { RaceContext } from "../provider/RaceProvider";
 import { RoleContext } from "../provider/RoleProvider";
+import { TraitContext } from "../provider/TraitProvider";
 import { SystemContext } from "../provider/SystemProvider";
 import { SystemNavigationContext } from "../provider/SystemNavigationProvider";
 
@@ -18,6 +19,7 @@ export function useProvider<T>(
 
 export const useRace = () => useProvider(RaceContext, "Race");
 export const useRole = () => useProvider(RoleContext, "Role");
+export const useTrait = () => useProvider(TraitContext, "Trait");
 
 export const useSystem = () => useProvider(SystemContext, "System");
 export const useSystemNavigation = () =>

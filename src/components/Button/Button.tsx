@@ -5,7 +5,8 @@ type ButtonProps = {
   children: React.ReactNode;
   disabled?: boolean;
   icon?: React.ElementType;
-  variant?: "primary" | "full" | "outline" | "danger";
+  variant?: "primary" | "outline" | "danger";
+  width?: "auto" | "full";
   size?: "sm" | "base" | "lg" | "xl";
   type?: "link" | "submit" | "button";
   to?: string;
@@ -21,6 +22,7 @@ const Button: React.FC<ButtonProps> = ({
   onClick,
   type = "link",
   variant,
+  width = "auto",
   size = "base",
   to = "/",
   className,
@@ -30,7 +32,7 @@ const Button: React.FC<ButtonProps> = ({
   const buttonClasses = [
     "button",
     size !== "base" ? `button--${size}` : "",
-    variant === "full" ? "button--full" : "",
+    width === "full" ? "button--full" : "",
     variant === "outline" ? "button--outline" : "",
     variant === "danger" ? "button--danger" : "",
     className || ""

@@ -45,7 +45,7 @@ export const useRoleMutation = (systemSlug: string, sectionSlug: string) => {
       const optimisticVariables = { ...variables };
       if (variables.primaryAbility && systemData?.abilities) {
         const abilityObject = systemData.abilities.find(
-          (ability: any) => ability._id === variables.primaryAbility,
+          (ability: any) => ability.id === variables.primaryAbility,
         );
         if (abilityObject) {
           optimisticVariables.primaryAbility = abilityObject;
@@ -70,7 +70,8 @@ export const useRoleMutation = (systemSlug: string, sectionSlug: string) => {
       if (variables.name) {
         const newSlug = generateSlug(variables.name);
         if (newSlug !== sectionSlug) {
-          navigate(`/admin/systems/${systemSlug}/roles/${newSlug}`);
+          // Replace history entry to prevent navigation to non-existent old slug
+          navigate(`/admin/systems/${systemSlug}/roles/${newSlug}`, { replace: true });
           return;
         }
       }

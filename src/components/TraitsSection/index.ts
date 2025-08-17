@@ -1,0 +1,1 @@
+export { TraitsSection } from './TraitsSection';

@@ -1,0 +1,32 @@
+.image-gallery {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: var(--spacing-6);
+
+  &__item {
+    border-radius: var(--border-radius-base);
+    overflow: hidden;
+
+    &--featured {
+      width: 100%;
+    }
+  }
+
+  &__thumbnails {
+    display: flex;
+    gap: 8px;
+
+    .image-gallery__item {
+      flex: 1;
+      max-width: calc(33.333% - 5.33px);
+    }
+  }
+
+  &__image {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    display: block;
+  }
+}
