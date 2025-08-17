@@ -9,7 +9,7 @@ import { SystemType, RoleType, RaceType, TraitType } from "@mod20/types";
  */
 export type SystemFormData = Pick<
   SystemType,
-  "name" | "introduction" | "mental" | "mentalName" | "mentalTiers"
+  "name" | "introduction"
 > & {
   backgroundImageId?: string | null;
   abilities?: Array<{
@@ -30,7 +30,7 @@ export type SystemFormData = Pick<
 /**
  * Form data for Role admin components
  */
-export type RoleFormData = Pick<RoleType, "name" | "introduction" | "mental" | "mentalName" | "mentalTiers"> & {
+export type RoleFormData = Pick<RoleType, "name" | "introduction"> & {
   hp_dice: string; // Form uses string, API expects number
   primaryAbility?: string; // Form uses ID string, API expects full object
 };
@@ -117,9 +117,6 @@ export const createSystemFormData = (
   backgroundImageId: system.backgroundImageId,
   abilities: formatAbilitiesForForm(system.abilities || []),
   skills: formatSkillsForForm(system.skills || []),
-  mental: system.mental || false,
-  mentalName: system.mentalName || "",
-  mentalTiers: system.mentalTiers || [],
 });
 
 // =============================================================================
