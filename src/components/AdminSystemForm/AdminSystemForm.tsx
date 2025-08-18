@@ -1,5 +1,10 @@
 import React from "react";
-import { useForm, useFieldArray, SubmitHandler } from "react-hook-form";
+import {
+  useForm,
+  useFieldArray,
+  SubmitHandler,
+  useWatch,
+} from "react-hook-form";
 import { TrashIcon } from "@heroicons/react/16/solid";
 
 import {
@@ -12,6 +17,7 @@ import {
 import AbilityScoresSection from "../AbilityScoresSection";
 import Button from "../Button/Button";
 import Card from "../Card/Card";
+import Checkbox from "../Checkbox/Checkbox";
 import ContentTitle from "../ContentTitle/ContentTitle";
 import Form from "../Form/Form";
 import { FormDate } from "../FormDate/FormDate";
@@ -43,37 +49,63 @@ export const AdminSystemForm: React.FC<AdminSystemFormProps> = ({
     control,
     name: "abilities",
   });
-  const { fields: skillFields, append: appendSkill, remove: removeSkill } = useFieldArray({
+  const {
+    fields: skillFields,
+    append: appendSkill,
+    remove: removeSkill,
+  } = useFieldArray({
     control,
     name: "skills",
   });
 
+  // Watch mental field to conditionally show mental-related fields
+  const mentalEnabled = useWatch({
+    control,
+    name: "mental",
+    defaultValue: system.mental || false,
+  });
+
   // Form initialization
   React.useEffect(() => {
-    if (system && system.name && !optimisticData && !isUpdating) {
-      reset(createSystemFormData(system, formatAbilitiesForForm, formatSkillsForForm));
+    if (system && system.name && !optimisticData) {
+      reset(
+        createSystemFormData(
+          system,
+          formatAbilitiesForForm,
+          formatSkillsForForm,
+        ),
+      );
     }
-  }, [system, optimisticData, reset, formatAbilitiesForForm, formatSkillsForForm, isUpdating]);
+  }, [
+    system,
+    optimisticData,
+    reset,
+    formatAbilitiesForForm,
+    formatSkillsForForm,
+  ]);
 
   // Event handlers
   const handleFormSubmit: SubmitHandler<SystemFormData> = (data) => {
     onSubmit(data);
   };
 
-
   // Computed values
   const showDeleteButton = onDelete && systemSlug && system.name;
   const isNewSystem = !system.name;
   const title = isNewSystem ? "Create New System" : `Edit ${system.name}`;
-  const submitButtonText = isUpdating 
-    ? (isNewSystem ? "Creating..." : "Saving...")
-    : (isNewSystem ? "Create System" : "Save Changes");
-  
+  const submitButtonText = isUpdating
+    ? isNewSystem
+      ? "Creating..."
+      : "Saving..."
+    : isNewSystem
+      ? "Create System"
+      : "Save Changes";
+
   // Sort skills alphabetically by name
   const sortedSkillFields = React.useMemo(() => {
     return [...skillFields].sort((a, b) => {
-      const nameA = a.name || '';
-      const nameB = b.name || '';
+      const nameA = a.name || "";
+      const nameB = b.name || "";
       return nameA.localeCompare(nameB);
     });
   }, [skillFields]);
@@ -81,21 +113,25 @@ export const AdminSystemForm: React.FC<AdminSystemFormProps> = ({
   // Create ability options for the select dropdown
   const abilityOptions = React.useMemo(() => {
     // For existing systems, use the actual system abilities (with real ObjectIds)
-    if (system.abilities && Array.isArray(system.abilities) && system.abilities.length > 0) {
+    if (
+      system.abilities &&
+      Array.isArray(system.abilities) &&
+      system.abilities.length > 0
+    ) {
       return system.abilities.map((ability: any) => ({
         value: ability.id,
-        label: ability.name
+        label: ability.name,
       }));
     }
-    
+
     // For new systems or when system.abilities is empty, use form fields
     if (fields && Array.isArray(fields) && fields.length > 0) {
       return fields.map((ability: any, index: number) => ({
         value: ability.id || `temp-${index}`,
-        label: ability.name || `Ability ${index + 1}`
+        label: ability.name || `Ability ${index + 1}`,
       }));
     }
-    
+
     return [];
   }, [system.abilities, fields]);
 
@@ -110,12 +146,12 @@ export const AdminSystemForm: React.FC<AdminSystemFormProps> = ({
       >
         {title}
       </ContentTitle>
-      <Form 
-        className="content" 
+      <Form
+        className="content"
         onSubmit={handleSubmit(handleFormSubmit)}
-        style={{ 
+        style={{
           opacity: isUpdating ? 0.8 : 1,
-          transition: 'opacity 0.2s ease'
+          transition: "opacity 0.2s ease",
         }}
       >
         <div className="content__main">
@@ -153,7 +189,9 @@ export const AdminSystemForm: React.FC<AdminSystemFormProps> = ({
               <FormDetails>
                 {sortedSkillFields.map((field) => {
                   // Find the original index in skillFields for form registration
-                  const originalIndex = skillFields.findIndex(f => f.id === field.id);
+                  const originalIndex = skillFields.findIndex(
+                    (f) => f.id === field.id,
+                  );
                   return (
                     <FormRow key={field.id} columns={4}>
                       <Input
@@ -168,15 +206,19 @@ export const AdminSystemForm: React.FC<AdminSystemFormProps> = ({
                         type="text"
                         placeholder="Skill description"
                         label="Description"
-                        {...register(`skills.${originalIndex}.description` as const)}
+                        {...register(
+                          `skills.${originalIndex}.description` as const,
+                        )}
                       />
                       <Select
                         label="Related Ability"
                         placeholder="Select ability..."
                         options={abilityOptions}
-                        {...register(`skills.${originalIndex}.relatedAbility` as const)}
+                        {...register(
+                          `skills.${originalIndex}.relatedAbility` as const,
+                        )}
                       />
-                      <div style={{ display: 'flex', alignItems: 'end' }}>
+                      <div style={{ display: "flex", alignItems: "end" }}>
                         <Button
                           type="button"
                           variant="outline"
@@ -192,7 +234,13 @@ export const AdminSystemForm: React.FC<AdminSystemFormProps> = ({
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => appendSkill({ name: "", description: "", relatedAbility: "" })}
+                  onClick={() =>
+                    appendSkill({
+                      name: "",
+                      description: "",
+                      relatedAbility: "",
+                    })
+                  }
                 >
                   Add Skill
                 </Button>
@@ -214,10 +262,66 @@ export const AdminSystemForm: React.FC<AdminSystemFormProps> = ({
                   </div>
                 )}
 
+                <Input
+                  type="number"
+                  placeholder="20"
+                  label="Maximum Character Level"
+                  description="The highest level characters can reach in this system (1-100)"
+                  {...register("maxLevel", {
+                    required: "Maximum level is required",
+                    min: {
+                      value: 1,
+                      message: "Maximum level must be at least 1"
+                    },
+                    max: {
+                      value: 100,
+                      message: "Maximum level cannot exceed 100"
+                    },
+                    valueAsNumber: true
+                  })}
+                />
+
                 <Button disabled={isUpdating} size="lg" type="submit">
                   {submitButtonText}
                   <IconD20 className="w-5 h-5" />
                 </Button>
+              </FormDetails>
+            </Card>
+          </FormGroup>
+
+          {/* Mental/Resilience System */}
+          <FormGroup>
+            <Label>Mental/Resilience System</Label>
+            <Card>
+              <FormDetails>
+                <Checkbox
+                  label="Enable Mental/Panic Mechanics"
+                  {...register("mental")}
+                />
+
+                {mentalEnabled && (
+                  <>
+                    <Input
+                      type="text"
+                      placeholder="e.g., Sanity, Grit, Courage, Stress"
+                      label="Mental Stat Name"
+                      {...register("mentalName", {
+                        required: mentalEnabled
+                          ? "Mental stat name is required when mental system is enabled"
+                          : false,
+                      })}
+                    />
+
+                    <div className="form-field">
+                      <Label>Mental Conditions</Label>
+                      <p className="form-field__description">
+                        Mental conditions (e.g., "Stressed", "Panicked", "Broken") will be 
+                        manageable from the system's mental conditions section once created. 
+                        These are separate from regular conditions like "Paralyzed" or "Poisoned".
+                      </p>
+                    </div>
+                  </>
+                )}
               </FormDetails>
             </Card>
           </FormGroup>

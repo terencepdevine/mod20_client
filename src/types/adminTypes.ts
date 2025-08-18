@@ -9,9 +9,10 @@ import { SystemType, RoleType, RaceType, TraitType } from "@mod20/types";
  */
 export type SystemFormData = Pick<
   SystemType,
-  "name" | "introduction" | "mental" | "mentalName" | "mentalTiers"
+  "name" | "introduction" | "mental" | "mentalName" | "mentalConditions"
 > & {
   backgroundImageId?: string | null;
+  maxLevel: number; // Maximum character level (1-100)
   abilities?: Array<{
     id?: string; // Preserve ID for existing abilities
     name: string;
@@ -30,7 +31,7 @@ export type SystemFormData = Pick<
 /**
  * Form data for Role admin components
  */
-export type RoleFormData = Pick<RoleType, "name" | "introduction" | "mental" | "mentalName" | "mentalTiers"> & {
+export type RoleFormData = Pick<RoleType, "name" | "introduction"> & {
   hp_dice: string; // Form uses string, API expects number
   primaryAbility?: string; // Form uses ID string, API expects full object
 };
@@ -115,11 +116,12 @@ export const createSystemFormData = (
   name: system.name || "",
   introduction: system.introduction || "",
   backgroundImageId: system.backgroundImageId,
+  maxLevel: system.character?.maxLevel || 20,
   abilities: formatAbilitiesForForm(system.abilities || []),
   skills: formatSkillsForForm(system.skills || []),
   mental: system.mental || false,
   mentalName: system.mentalName || "",
-  mentalTiers: system.mentalTiers || [],
+  mentalConditions: system.mentalConditions || [],
 });
 
 // =============================================================================

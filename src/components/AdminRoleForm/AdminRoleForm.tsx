@@ -1,7 +1,7 @@
 import React from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 
-import { RoleType, SystemType } from "@mod20/types";
+import { RoleType } from "@mod20/types";
 import {
   RoleFormData,
   AdminRoleFormProps,
