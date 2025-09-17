@@ -20,7 +20,6 @@ export const useCreateSystem = () => {
   return useMutation({
     mutationFn: (systemData: CreateSystemData) => createEditSystem(systemData),
     onSuccess: (createdSystem) => {
-      console.log("Create system success - received data:", createdSystem);
       
       if (createdSystem && createdSystem.name) {
         const systemSlug = generateSlug(createdSystem.name);
@@ -39,12 +38,10 @@ export const useCreateSystem = () => {
         toast.success(`System "${createdSystem.name}" created successfully!`);
         navigate(`/admin/systems/${systemSlug}`);
       } else {
-        console.error("System created but invalid response format:", createdSystem);
         toast.error("System created but response format is invalid");
       }
     },
     onError: (error: Error) => {
-      console.error("System creation error:", error);
       toast.error(error.message || "Failed to create system");
     },
   });

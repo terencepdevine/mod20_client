@@ -44,9 +44,6 @@ const AdminRoleNew: React.FC = () => {
       system: system.id,
       hp_dice: parseInt(formData.hp_dice),
     };
-    console.log("Creating role with data:", finalRoleData);
-    console.log("System ID:", system.id);
-    console.log("System slug:", systemSlug);
     createRole(finalRoleData);
   };
 

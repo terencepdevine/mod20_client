@@ -214,7 +214,7 @@ export const TraitsSection: React.FC<TraitsSectionProps> = ({
       
       resetCreateTraitForm();
     } catch (error) {
-      console.error("Failed to create trait:", error);
+      // Error handling for trait creation failure
     } finally {
       setIsSubmittingNewTrait(false);
     }
@@ -258,10 +258,87 @@ export const TraitsSection: React.FC<TraitsSectionProps> = ({
   if (traits.length === 0) {
     return (
       <div className="traits-section">
-        <div className="traits-section__empty">
-          <p>No traits available for this system.</p>
-          <p>Create traits first to add them to races.</p>
+        <div className="traits-section__header">
+          <h4>Traits</h4>
+          <p>No traits available for this system. Create your first trait below.</p>
         </div>
+
+        {/* Create New Trait Section */}
+        {onCreateTrait && (
+          <div className="traits-section__create-new">
+            <div className="traits-section__create-header">
+              <h5>Create New Trait</h5>
+              <p>Create a new trait that will be available for this system.</p>
+            </div>
+
+            {!isCreatingTrait ? (
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                onClick={() => setIsCreatingTrait(true)}
+              >
+                Create First Trait
+              </Button>
+            ) : (
+              <div className="traits-section__create-form">
+                <div className="traits-section__create-fields">
+                  <Input
+                    type="text"
+                    label="Trait Name"
+                    placeholder="Enter trait name..."
+                    value={newTraitName}
+                    onChange={(e) => setNewTraitName(e.target.value)}
+                    disabled={isFormDisabled}
+                  />
+
+                  {control ? (
+                    <TextEditor
+                      control={control}
+                      name="newTraitDescription"
+                      label="Trait Description"
+                      placeholder="Enter trait description..."
+                      defaultValue=""
+                    />
+                  ) : (
+                    <div>
+                      <label htmlFor="newTraitDescription">Trait Description</label>
+                      <textarea
+                        id="newTraitDescription"
+                        placeholder="Enter trait description..."
+                        value={newTraitDescription}
+                        onChange={(e) => setNewTraitDescription(e.target.value)}
+                        disabled={isFormDisabled}
+                        rows={4}
+                      />
+                    </div>
+                  )}
+                </div>
+
+                <div className="traits-section__create-actions">
+                  <Button
+                    type="button"
+                    variant="primary"
+                    size="sm"
+                    onClick={handleCreateNewTrait}
+                    disabled={!newTraitName.trim() || isFormDisabled}
+                  >
+                    {isFormDisabled ? "Creating..." : "Create Trait"}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleCancelNewTrait}
+                    disabled={isFormDisabled}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     );
   }

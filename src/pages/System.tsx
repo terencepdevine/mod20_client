@@ -38,7 +38,6 @@ const SystemContent: React.FC = () => {
     return <h1>Error: {error.message || "Something went wrong"}</h1>;
 
   if (!system) {
-    console.error("System Context is null");
     return <div>Error: System is missing.</div>;
   }
 

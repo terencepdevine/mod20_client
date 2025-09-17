@@ -5,7 +5,7 @@ import IconTwitch from "../IconTwitch/IconTwitch";
 import IconDiscord from "../IconDiscord/IconDiscord";
 import IconInstagram from "../IconInstagram/IconInstagram";
 
-import "./NavSocial.css";
+import "./NavSocial.scss";
 
 const NavSocial = () => {
   return (

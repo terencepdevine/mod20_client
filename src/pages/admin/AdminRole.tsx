@@ -81,7 +81,6 @@ const AdminRoleContent: React.FC = () => {
     deleteRole({ sectionSlug: sectionSlug as string });
   };
 
-  console.log("System ID:", system.id);
 
   return (
     <MediaLibraryProvider

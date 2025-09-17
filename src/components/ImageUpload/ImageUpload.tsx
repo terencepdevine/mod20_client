@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react';
 import { ImageUploadFieldProps } from '../../types/ImageField';
 import Button from '../Button';
 import { toast } from 'react-toastify';
-import './ImageUpload.css';
+import './ImageUpload.scss';
 
 const ImageUpload: React.FC<ImageUploadFieldProps> = ({
   onUpload,

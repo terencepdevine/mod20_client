@@ -11,7 +11,6 @@ export const useDeleteRole = (systemSlug: string) => {
     mutationFn: ({ sectionSlug }: { sectionSlug: string }) =>
       deleteRole(systemSlug, sectionSlug),
     onSuccess: (_, { sectionSlug }) => {
-      console.log("Delete role success for:", sectionSlug);
       
       // Invalidate system query to update sidebar navigation
       queryClient.invalidateQueries({
@@ -22,7 +21,6 @@ export const useDeleteRole = (systemSlug: string) => {
       navigate(`/admin/systems/${systemSlug}`);
     },
     onError: (error: Error, { sectionSlug }) => {
-      console.error("Role deletion error:", error);
       toast.error(error.message || `Failed to delete role ${sectionSlug}`);
     },
   });

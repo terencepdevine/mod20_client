@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
 import { useTheme } from "../../contexts/ThemeContext";
 
-import "./NavUser.css";
+import "./NavUser.scss";
 
 const NavUser = () => {
   const [showNav, setShowNav] = useState<boolean>(false);

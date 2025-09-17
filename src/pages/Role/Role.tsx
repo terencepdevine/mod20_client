@@ -9,7 +9,7 @@ import { joinWithComma } from "../../utils/joinWithComma";
 import { useQuery } from "@tanstack/react-query";
 import { getImages } from "../../services/apiSystem";
 import { getImageUrl } from "../../utils/imageUtils";
-import "./Role.css";
+import "./Role.scss";
 
 const Role: React.FC = () => {
   const { systemSlug, sectionSlug } = useParams();
@@ -43,7 +43,6 @@ const RoleContent: React.FC = () => {
     return <h1>Error: {error.message || "Something went wrong"}</h1>;
 
   if (!data) {
-    console.error("RoleContext is null");
     return <div>Error: Role data is missing.</div>;
   }
 

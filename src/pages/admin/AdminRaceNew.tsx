@@ -43,9 +43,6 @@ const AdminRaceNew: React.FC = () => {
       images: raceData.images,
       system: system.id,
     };
-    console.log("Creating race with data:", finalRaceData);
-    console.log("System ID:", system.id);
-    console.log("System slug:", systemSlug);
     createRace(finalRaceData);
   };
 

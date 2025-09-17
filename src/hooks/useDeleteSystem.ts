@@ -32,7 +32,6 @@ export const useDeleteSystem = () => {
       return { previousSystems };
     },
     onSuccess: (_, { systemSlug }) => {
-      console.log("Delete system success for:", systemSlug);
       
       // Invalidate systems query to ensure fresh data
       queryClient.invalidateQueries({
@@ -48,7 +47,6 @@ export const useDeleteSystem = () => {
         queryClient.setQueryData(["systems"], context.previousSystems);
       }
       
-      console.error("System deletion error:", error);
       toast.error(error.message || `Failed to delete system ${systemSlug}`);
     },
   });

@@ -32,7 +32,6 @@ const SystemBlock: React.FC = () => {
     return <h1>Error: {error.message || "Something went wrong"}</h1>;
 
   if (!system) {
-    console.error("System Context is Null");
     return <div>Error: System data is missing</div>;
   }
 

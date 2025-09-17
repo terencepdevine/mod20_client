@@ -36,9 +36,6 @@ const AdminTraitNew: React.FC = () => {
 
   // Form submission handler
   const handleFormSubmit = (formData: TraitFormData) => {
-    console.log("Creating trait with data:", formData);
-    console.log("System ID:", system.id);
-    console.log("System slug:", systemSlug);
     createTrait(formData);
   };
 

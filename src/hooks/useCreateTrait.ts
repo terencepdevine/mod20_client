@@ -15,7 +15,6 @@ export function useCreateTrait(systemSlug: string, systemId: string) {
         order: 0,
       }),
     onSuccess: (newTrait) => {
-      console.log('Trait created successfully:', newTrait);
       
       // Invalidate traits query to refetch
       queryClient.invalidateQueries({ queryKey: ["traits", systemId] });
@@ -24,7 +23,6 @@ export function useCreateTrait(systemSlug: string, systemId: string) {
       navigate(`/admin/systems/${systemSlug}/traits/${newTrait.slug}`);
     },
     onError: (error) => {
-      console.error("Error creating trait:", error);
       alert(`Failed to create trait: ${error.message}`);
     },
   });

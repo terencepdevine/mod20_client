@@ -26,7 +26,6 @@ export const useCreateRace = (systemSlug: string) => {
   return useMutation({
     mutationFn: (raceData: CreateRaceData) => createRace(systemSlug, raceData),
     onSuccess: (createdRace) => {
-      console.log("Create race success - received data:", createdRace);
       
       if (createdRace && createdRace.name) {
         const raceSlug = generateSlug(createdRace.name);
@@ -45,12 +44,10 @@ export const useCreateRace = (systemSlug: string) => {
         toast.success(`Race "${createdRace.name}" created successfully!`);
         navigate(`/admin/systems/${systemSlug}/races/${raceSlug}`);
       } else {
-        console.error("Race created but invalid response format:", createdRace);
         toast.error("Race created but response format is invalid");
       }
     },
     onError: (error: Error) => {
-      console.error("Race creation error:", error);
       toast.error(error.message || "Failed to create race");
     },
   });

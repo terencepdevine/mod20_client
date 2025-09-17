@@ -3,6 +3,7 @@ import { RouteObject } from "react-router-dom";
 import AdminSystems from "../pages/admin/AdminSystems";
 import AdminSystem from "../pages/admin/AdminSystem";
 import AdminSystemNew from "../pages/admin/AdminSystemNew";
+import AdminSystemPanic from "../pages/admin/AdminSystemPanic";
 import AdminRole from "../pages/admin/AdminRole";
 import AdminRoleNew from "../pages/admin/AdminRoleNew";
 import AdminRace from "../pages/admin/AdminRace";
@@ -32,6 +33,11 @@ const adminRoutes: RouteObject[] = [
       {
         path: "systems/:systemSlug",
         element: <AdminSystem />,
+        loader: systemLoader,
+      },
+      {
+        path: "systems/:systemSlug/panic",
+        element: <AdminSystemPanic />,
         loader: systemLoader,
       },
       {

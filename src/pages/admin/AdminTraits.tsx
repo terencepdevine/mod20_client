@@ -16,7 +16,7 @@ const AdminTraits: React.FC = () => {
     isError: systemError,
     error: systemErrorMessage,
   } = useSystem();
-  
+
   const {
     data: traits,
     isPending: traitsPending,
@@ -68,13 +68,12 @@ const AdminTraits: React.FC = () => {
             </Link>
           </div>
 
-          {traitsPending && (
-            <Loading message="Loading traits..." />
-          )}
+          {traitsPending && <Loading message="Loading traits..." />}
 
           {traitsError && traitsErrorMessage && (
             <div className="error-message">
-              Error loading traits: {traitsErrorMessage.message || "Something went wrong"}
+              Error loading traits:{" "}
+              {traitsErrorMessage.message || "Something went wrong"}
             </div>
           )}
 
@@ -95,20 +94,23 @@ const AdminTraits: React.FC = () => {
                 <div key={trait.id} className="admin-list__item">
                   <div className="admin-list__item-info">
                     <h4 className="admin-list__item-title">
-                      <Link to={`/admin/systems/${systemSlug}/traits/${trait.slug}`}>
+                      <Link
+                        to={`/admin/systems/${systemSlug}/traits/${trait.slug}`}
+                      >
                         {trait.name}
                       </Link>
                     </h4>
                     {trait.description && (
-                      <p className="admin-list__item-description">
-                        {trait.description.length > 100
-                          ? `${trait.description.substring(0, 100)}...`
-                          : trait.description}
-                      </p>
+                      <div
+                        className="admin-list__item-description"
+                        dangerouslySetInnerHTML={{ __html: trait.description }}
+                      />
                     )}
                   </div>
                   <div className="admin-list__item-actions">
-                    <Link to={`/admin/systems/${systemSlug}/traits/${trait.slug}`}>
+                    <Link
+                      to={`/admin/systems/${systemSlug}/traits/${trait.slug}`}
+                    >
                       <Button variant="outline" size="sm">
                         Edit
                       </Button>

@@ -40,8 +40,6 @@ export async function createTrait(
 
   if (!res.ok) {
     const errorData = await res.json().catch(() => ({ message: 'Unknown error' }));
-    console.error('API Error Response:', { status: res.status, statusText: res.statusText, errorData });
-    
     throw new Error(`Failed to create trait: ${errorData.message || res.statusText}`);
   }
 

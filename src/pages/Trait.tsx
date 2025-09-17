@@ -40,7 +40,6 @@ const TraitContent: React.FC = () => {
     return <h1>Error: {error.message || "Something went wrong"}</h1>;
 
   if (!data) {
-    console.error("TraitContext is null");
     return <div>Error: Trait data is missing.</div>;
   }
 

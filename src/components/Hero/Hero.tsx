@@ -6,16 +6,18 @@ interface HeroProps {
 }
 
 const Hero: React.FC<HeroProps> = ({ name, backgroundImage }) => {
-  const heroStyle = backgroundImage
-    ? { backgroundImage: `url(${backgroundImage})` }
-    : {};
-
   return (
     <div className="hero">
-      <div className="hero__title-wrap">
+      {backgroundImage && (
+        <img 
+          src={backgroundImage}
+          alt=""
+          className="hero__background-image"
+        />
+      )}
+      <div className="hero__content">
         <h1 className="hero__title">{name}</h1>
       </div>
-      <div className="hero__background-image" style={heroStyle}></div>
     </div>
   );
 };

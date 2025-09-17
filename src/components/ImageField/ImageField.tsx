@@ -1,7 +1,7 @@
 import React from 'react';
 import { ImageFieldProps } from '../../types/ImageField';
 import Button from '../Button';
-import './ImageField.css';
+import './ImageField.scss';
 
 const ImageField: React.FC<ImageFieldProps> = ({
   label,

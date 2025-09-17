@@ -16,7 +16,6 @@ const AdminSystemNew: React.FC = () => {
       backgroundImageId: systemData.backgroundImageId,
       images: systemData.images,
     };
-    console.log("Creating system with data:", finalSystemData);
     createSystem(finalSystemData);
   };
 

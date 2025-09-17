@@ -2,7 +2,6 @@ import React from "react";
 import { Controller } from "react-hook-form";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import Link from "@tiptap/extension-link";
 import Image from "@tiptap/extension-image";
 import TextAlign from "@tiptap/extension-text-align";
 import Placeholder from "@tiptap/extension-placeholder";
@@ -68,12 +67,6 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
           HTMLAttributes: {
             class: "tiptap-heading",
           },
-        },
-      }),
-      Link.configure({
-        openOnClick: false,
-        HTMLAttributes: {
-          class: "tiptap-link",
         },
       }),
       Image.configure({

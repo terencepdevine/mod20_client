@@ -79,7 +79,6 @@ const AdminTrait: React.FC = () => {
 
   // Form submission handler
   const handleFormSubmit = (formData: TraitFormData) => {
-    console.log("Updating trait with data:", formData);
     updateTrait(formData);
   };
 

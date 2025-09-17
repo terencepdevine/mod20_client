@@ -12,6 +12,8 @@ import {
   AdminSystemFormProps,
   createSystemFormData,
 } from "../../types/adminTypes";
+import { useFormSubmissionProtection } from "../../hooks/useFormSubmissionProtection";
+import { useTheme } from "../../contexts/ThemeContext";
 
 // Components
 import AbilityScoresSection from "../AbilityScoresSection";
@@ -58,36 +60,55 @@ export const AdminSystemForm: React.FC<AdminSystemFormProps> = ({
     name: "skills",
   });
 
-  // Watch mental field to conditionally show mental-related fields
-  const mentalEnabled = useWatch({
-    control,
-    name: "mental",
-    defaultValue: system.mental || false,
-  });
-
-  // Form initialization
-  React.useEffect(() => {
-    if (system && system.name && !optimisticData) {
-      reset(
-        createSystemFormData(
-          system,
-          formatAbilitiesForForm,
-          formatSkillsForForm,
-        ),
-      );
-    }
-  }, [
+  // Prevent form field flashing during save operations
+  const { createProtectedSubmitHandler, isFormSubmitting } = useFormSubmissionProtection(
     system,
+    isUpdating,
     optimisticData,
     reset,
-    formatAbilitiesForForm,
-    formatSkillsForForm,
-  ]);
+    (sys) => createSystemFormData(sys, formatAbilitiesForForm, formatSkillsForForm)
+  );
+
+  // Theme context for real-time color preview
+  const { setBackgroundColorFamily, setPrimaryColorFamily, setPreviewMode } = useTheme();
+
+  // Separate state for real-time preview (independent of form)
+  const [previewBackgroundColor, setPreviewBackgroundColor] = React.useState<string>(
+    system.backgroundColorFamily || "gray"
+  );
+  const [previewPrimaryColor, setPreviewPrimaryColor] = React.useState<string>(
+    system.primaryColorFamily || "blue"
+  );
+
+  // Apply the preview colors to theme
+  React.useEffect(() => {
+    setBackgroundColorFamily(previewBackgroundColor as any);
+  }, [previewBackgroundColor, setBackgroundColorFamily]);
+
+  React.useEffect(() => {
+    setPrimaryColorFamily(previewPrimaryColor as any);
+  }, [previewPrimaryColor, setPrimaryColorFamily]);
+
+  // Handle form field changes for real-time preview
+  const handleBackgroundColorChange = (value: string) => {
+    setPreviewMode(true); // Enable preview mode to prevent AppLayout from overriding
+    setPreviewBackgroundColor(value);
+    setValue("backgroundColorFamily", value);
+  };
+
+  const handlePrimaryColorChange = (value: string) => {
+    setPreviewMode(true); // Enable preview mode to prevent AppLayout from overriding
+    setPreviewPrimaryColor(value);
+    setValue("primaryColorFamily", value);
+  };
 
   // Event handlers
-  const handleFormSubmit: SubmitHandler<SystemFormData> = (data) => {
+  const handleFormSubmit: SubmitHandler<SystemFormData> = createProtectedSubmitHandler((data) => {
     onSubmit(data);
-  };
+    // Keep preview mode enabled, but sync preview states with the submitted values
+    setPreviewBackgroundColor(data.backgroundColorFamily || "gray");
+    setPreviewPrimaryColor(data.primaryColorFamily || "blue");
+  });
 
   // Computed values
   const showDeleteButton = onDelete && systemSlug && system.name;
@@ -262,6 +283,20 @@ export const AdminSystemForm: React.FC<AdminSystemFormProps> = ({
                   </div>
                 )}
 
+
+                <Button disabled={isUpdating} size="lg" type="submit">
+                  {submitButtonText}
+                  <IconD20 className="w-5 h-5" />
+                </Button>
+              </FormDetails>
+            </Card>
+          </FormGroup>
+
+          {/* Character Level */}
+          <FormGroup>
+            <Label>Character Level</Label>
+            <Card>
+              <FormDetails>
                 <Input
                   type="number"
                   placeholder="20"
@@ -280,48 +315,50 @@ export const AdminSystemForm: React.FC<AdminSystemFormProps> = ({
                     valueAsNumber: true
                   })}
                 />
-
-                <Button disabled={isUpdating} size="lg" type="submit">
-                  {submitButtonText}
-                  <IconD20 className="w-5 h-5" />
-                </Button>
               </FormDetails>
             </Card>
           </FormGroup>
 
-          {/* Mental/Resilience System */}
+          {/* Styling Options */}
           <FormGroup>
-            <Label>Mental/Resilience System</Label>
+            <Label>Styling</Label>
             <Card>
               <FormDetails>
-                <Checkbox
-                  label="Enable Mental/Panic Mechanics"
-                  {...register("mental")}
+                <Select
+                  label="Background Color Family"
+                  placeholder="Select color family..."
+                  description="Choose the background color scheme for this system"
+                  options={[
+                    { value: "gray", label: "Gray" },
+                    { value: "slate", label: "Slate" },
+                    { value: "zinc", label: "Zinc" },
+                    { value: "neutral", label: "Neutral" },
+                    { value: "stone", label: "Stone" }
+                  ]}
+                  {...register("backgroundColorFamily", {
+                    onChange: (e) => handleBackgroundColorChange(e.target.value)
+                  })}
                 />
-
-                {mentalEnabled && (
-                  <>
-                    <Input
-                      type="text"
-                      placeholder="e.g., Sanity, Grit, Courage, Stress"
-                      label="Mental Stat Name"
-                      {...register("mentalName", {
-                        required: mentalEnabled
-                          ? "Mental stat name is required when mental system is enabled"
-                          : false,
-                      })}
-                    />
-
-                    <div className="form-field">
-                      <Label>Mental Conditions</Label>
-                      <p className="form-field__description">
-                        Mental conditions (e.g., "Stressed", "Panicked", "Broken") will be 
-                        manageable from the system's mental conditions section once created. 
-                        These are separate from regular conditions like "Paralyzed" or "Poisoned".
-                      </p>
-                    </div>
-                  </>
-                )}
+                <Select
+                  label="Primary Color Family"
+                  placeholder="Select color family..."
+                  description="Choose the primary color scheme for buttons, links, and accents"
+                  options={[
+                    { value: "blue", label: "Blue" },
+                    { value: "indigo", label: "Indigo" },
+                    { value: "purple", label: "Purple" },
+                    { value: "green", label: "Green" },
+                    { value: "red", label: "Red" },
+                    { value: "orange", label: "Orange" },
+                    { value: "yellow", label: "Yellow" },
+                    { value: "teal", label: "Teal" },
+                    { value: "cyan", label: "Cyan" },
+                    { value: "sky", label: "Sky" }
+                  ]}
+                  {...register("primaryColorFamily", {
+                    onChange: (e) => handlePrimaryColorChange(e.target.value)
+                  })}
+                />
               </FormDetails>
             </Card>
           </FormGroup>

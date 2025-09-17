@@ -19,3 +19,9 @@
     font-size: var(--font-size-xl);
   }
 }
+
+// Nested input styling for inputs inside Card components
+.card .input {
+  background-color: var(--bg-input-nested);
+  border-radius: var(--border-radius-sm);
+}

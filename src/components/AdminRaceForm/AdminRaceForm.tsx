@@ -7,6 +7,7 @@ import {
   createRaceFormData,
 } from "../../types/adminTypes";
 import { SIZE_OPTIONS } from "../../utils/raceUtils";
+import { useFormSubmissionProtection } from "../../hooks/useFormSubmissionProtection";
 
 import Button from "../Button/Button";
 import Card from "../Card/Card";
@@ -57,17 +58,17 @@ export const AdminRaceForm: React.FC<AdminRaceFormProps> = ({
     name: "traits",
   });
 
-  // Form initialization
-  React.useEffect(() => {
-    if (race && !optimisticData) {
-      reset(createRaceFormData(race));
-    }
-  }, [race, optimisticData, reset]);
+  // Prevent form field flashing during save operations
+  const { createProtectedSubmitHandler } = useFormSubmissionProtection(
+    race,
+    isUpdating,
+    optimisticData,
+    reset,
+    (raceData) => createRaceFormData(raceData)
+  );
 
   // Event handlers
-  const handleFormSubmit: SubmitHandler<RaceFormData> = (data) => {
-    onSubmit(data);
-  };
+  const handleFormSubmit: SubmitHandler<RaceFormData> = createProtectedSubmitHandler(onSubmit);
 
   // Computed values
   const showDeleteButton = onDelete && systemSlug && sectionSlug && race.name;

@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { MediaLibraryModalProps } from "../../types/ImageField";
 import Button from "../Button/Button";
 import { toast } from "react-toastify";
-import "./MediaLibraryModal.css";
+import "./MediaLibraryModal.scss";
 
 const MediaLibraryModal: React.FC<MediaLibraryModalProps> = ({
   isOpen,

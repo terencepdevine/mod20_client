@@ -11,7 +11,6 @@ export const useDeleteRace = (systemSlug: string) => {
     mutationFn: ({ sectionSlug }: { sectionSlug: string }) =>
       deleteRace(systemSlug, sectionSlug),
     onSuccess: (_, { sectionSlug }) => {
-      console.log("Delete race success for:", sectionSlug);
       
       // Invalidate system query to update sidebar navigation
       queryClient.invalidateQueries({
@@ -22,7 +21,6 @@ export const useDeleteRace = (systemSlug: string) => {
       navigate(`/admin/systems/${systemSlug}`);
     },
     onError: (error: Error, { sectionSlug }) => {
-      console.error("Race deletion error:", error);
       toast.error(error.message || `Failed to delete race ${sectionSlug}`);
     },
   });

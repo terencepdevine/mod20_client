@@ -21,11 +21,22 @@ export async function getSystems(): Promise<SystemType[]> {
 
 export async function createEditSystem(
   newSystem: {
-    name: string;
+    name?: string;
     introduction?: string;
     backgroundImageId?: string | null;
     abilities?: Array<{ name: string; description?: string; order?: number }>;
     skills?: Array<{ name: string; description?: string; relatedAbility?: string }>;
+    mental?: boolean;
+    mentalName?: string;
+    mentalConditions?: Array<{
+      id?: string;
+      name: string;
+      description?: string;
+      severity?: number;
+      minPercentage?: number;
+      maxPercentage?: number;
+      order?: number;
+    }>;
   },
   systemSlug?: string,
 ): Promise<SystemType> {
@@ -66,7 +77,6 @@ export async function deleteSystem(systemSlug: string): Promise<void> {
   
   if (!res.ok) {
     const errorText = await res.text();
-    console.error("Delete system API error:", res.status, errorText);
     throw Error(`Failed deleting System ${systemSlug}: ${res.status} - ${errorText}`);
   }
 }
@@ -162,7 +172,6 @@ export async function createRole(
   
   if (!res.ok) {
     const errorText = await res.text();
-    console.error("Create role API error:", res.status, errorText);
     throw Error(`Failed creating Role: ${res.status}`);
   }
 
@@ -173,7 +182,6 @@ export async function createRole(
   } else if (response.data) {
     return response.data;
   } else {
-    console.error("Unexpected create role response:", response);
     throw new Error("Invalid response format from create role API");
   }
 }
@@ -198,7 +206,6 @@ export async function updateRole(
   
   if (!res.ok) {
     const errorText = await res.text();
-    console.error("Update role API error:", res.status, errorText);
     throw Error(`Failed updating Role ${sectionSlug}: ${res.status} - ${errorText}`);
   }
 
@@ -217,7 +224,6 @@ export async function deleteRole(
   
   if (!res.ok) {
     const errorText = await res.text();
-    console.error("Delete role API error:", res.status, errorText);
     throw Error(`Failed deleting Role ${sectionSlug}: ${res.status} - ${errorText}`);
   }
 }
@@ -248,7 +254,6 @@ export async function updateRace(
   
   if (!res.ok) {
     const errorText = await res.text();
-    console.error("Update race API error:", res.status, errorText);
     throw Error(`Failed updating Race ${sectionSlug}: ${res.status} - ${errorText}`);
   }
 
@@ -267,7 +272,6 @@ export async function deleteRace(
   
   if (!res.ok) {
     const errorText = await res.text();
-    console.error("Delete race API error:", res.status, errorText);
     throw Error(`Failed deleting Race ${sectionSlug}: ${res.status} - ${errorText}`);
   }
 }
@@ -303,7 +307,6 @@ export async function createRace(
   
   if (!res.ok) {
     const errorText = await res.text();
-    console.error("Create race API error:", res.status, errorText);
     throw Error(`Failed creating Race: ${res.status}`);
   }
 
@@ -314,7 +317,6 @@ export async function createRace(
   } else if (response.data) {
     return response.data;
   } else {
-    console.error("Unexpected create race response:", response);
     throw new Error("Invalid response format from create race API");
   }
 }

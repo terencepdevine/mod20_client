@@ -1,4 +1,7 @@
+import { useState } from "react";
 import { Outlet, useParams, Link, useLocation } from "react-router-dom";
+import { motion, AnimatePresence } from "motion/react";
+import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { SystemProvider } from "../../provider/SystemProvider";
 import { useSystem } from "../../hooks/useProvider";
 import "./AdminLayout.scss";
@@ -64,99 +67,143 @@ const Sidebar: React.FC = () => {
     );
   }
 
+  // Create admin navigation structure using the same pattern as SidebarNavigation
+  const adminNavigation = [
+    {
+      name: "System",
+      slug: "system",
+      children: [
+        { name: "Settings", slug: systemSlug || "" },
+        { name: "Panic", slug: "panic" }
+      ]
+    },
+    {
+      name: "Roles",
+      slug: "roles",
+      children: [
+        ...(system.character?.roles?.map((role: RoleType) => ({
+          name: role.name,
+          slug: role.slug
+        })) || []),
+        { name: "+ Add Role", slug: "new", isAddButton: true }
+      ]
+    },
+    {
+      name: "Races", 
+      slug: "races",
+      children: [
+        ...(system.character?.races?.map((race: RaceType) => ({
+          name: race.name,
+          slug: race.slug
+        })) || []),
+        { name: "+ Add Race", slug: "new", isAddButton: true }
+      ]
+    },
+    {
+      name: "Traits",
+      slug: "traits", 
+      children: [
+        { name: "Manage Traits", slug: "" },
+        { name: "+ Add Trait", slug: "new", isAddButton: true }
+      ]
+    }
+  ];
+
   return (
     <aside className="sidebar">
       <div className="sidebar__section">
         <Link to={`/admin/systems`}>← Back to Systems</Link>
         <h2>System: {system.name}</h2>
-        <nav>
-          <ul>
-            <li>
-              <Link to={`/admin/systems/${systemSlug}`}>System Settings</Link>
-            </li>
-            <li></li>
-          </ul>
-        </nav>
       </div>
 
-      <div className="sidebar__section">
-        <h3>Roles</h3>
-        <nav className="sidebar__nav">
-          <ul className="sidebar__nav-list">
-            {system.character?.roles?.map((role: RoleType) => (
-              <li key={role.slug} className="sidebar__nav-item">
-                <Link
-                  to={`/admin/systems/${systemSlug}/roles/${role.slug}`}
-                  className="sidebar__nav-link"
-                >
-                  {role.name}
-                </Link>
-              </li>
-            ))}
-            {(!system.character?.roles ||
-              system.character.roles.length === 0) && (
-              <li>No roles available</li>
-            )}
-            <li>
-              <Button
-                to={`/admin/systems/${systemSlug}/roles/new`}
-                variant="outline"
-              >
-                + Add Role
-              </Button>
-            </li>
-          </ul>
-        </nav>
-      </div>
-
-      <div className="sidebar__section">
-        <h3>Races</h3>
-        <nav>
-          <ul>
-            {system.character?.races?.map((race: RaceType) => (
-              <li key={race.slug}>
-                <Link to={`/admin/systems/${systemSlug}/races/${race.slug}`}>
-                  {race.name}
-                </Link>
-              </li>
-            ))}
-            {(!system.character?.races ||
-              system.character.races.length === 0) && (
-              <li>No races available</li>
-            )}
-            <li>
-              <Button
-                to={`/admin/systems/${systemSlug}/races/new`}
-                variant="outline"
-              >
-                + Add Race
-              </Button>
-            </li>
-          </ul>
-        </nav>
-      </div>
-
-      <div className="sidebar__section">
-        <h3>Traits</h3>
-        <nav>
-          <ul>
-            <li>
-              <Link to={`/admin/systems/${systemSlug}/traits`}>
-                Manage Traits
-              </Link>
-            </li>
-            <li>
-              <Button
-                to={`/admin/systems/${systemSlug}/traits/new`}
-                variant="outline"
-              >
-                + Add Trait
-              </Button>
-            </li>
-          </ul>
-        </nav>
-      </div>
+      <nav className="nav-sidebar">
+        <ul className="nav-sidebar__list">
+          {adminNavigation.map((item, index) => (
+            <AdminSidebarNavigationItem
+              key={index}
+              systemSlug={systemSlug || ""}
+              item={item}
+            />
+          ))}
+        </ul>
+      </nav>
     </aside>
+  );
+};
+
+// Admin-specific version of SidebarNavigationItem that generates admin routes
+interface AdminSidebarNavigationItemProps {
+  systemSlug: string;
+  item: {
+    name: string;
+    slug: string;
+    children?: {
+      name: string;
+      slug: string;
+      isAddButton?: boolean;
+    }[];
+  };
+}
+
+const AdminSidebarNavigationItem: React.FC<AdminSidebarNavigationItemProps> = ({
+  systemSlug,
+  item,
+}) => {
+  const [active, setActive] = useState<boolean>(false);
+  const { sectionSlug } = useParams();
+
+  const handleClick = () => {
+    setActive((s) => !s);
+  };
+
+  const generateAdminLink = (parentSlug: string, childSlug: string) => {
+    if (parentSlug === "system") {
+      if (childSlug === systemSlug) {
+        return `/admin/systems/${systemSlug}`;
+      }
+      return `/admin/systems/${systemSlug}/${childSlug}`;
+    }
+    if (parentSlug === "traits" && childSlug === "") {
+      return `/admin/systems/${systemSlug}/traits`;
+    }
+    return `/admin/systems/${systemSlug}/${parentSlug}/${childSlug}`;
+  };
+
+  return (
+    <li
+      className={`nav-sidebar__item ${active ? "nav-sidebar__item--active" : ""}`}
+    >
+      <button className="nav-sidebar__link" onClick={handleClick}>
+        {item.name}
+        <ChevronDownIcon className="nav-sidebar__link-arrow" />
+      </button>
+
+      <AnimatePresence initial={false}>
+        {item.children && active && (
+          <motion.ul
+            className="nav-sidebar__sub-list"
+            initial={{ height: 0 }}
+            animate={{ height: "auto" }}
+            exit={{ height: 0 }}
+            transition={{ duration: 0.12, ease: "easeInOut" }}
+          >
+            {item.children.map((child) => (
+              <li
+                key={child.slug}
+                className={`nav-sidebar__sub-item ${child.isAddButton ? "nav-sidebar__sub-item--add-button" : ""} ${sectionSlug === child.slug ? "nav-sidebar__sub-item--active" : ""}`}
+              >
+                <Link
+                  to={generateAdminLink(item.slug, child.slug)}
+                  className={`nav-sidebar__sub-link ${child.isAddButton ? "nav-sidebar__sub-link--add-button" : ""}`}
+                >
+                  {child.name}
+                </Link>
+              </li>
+            ))}
+          </motion.ul>
+        )}
+      </AnimatePresence>
+    </li>
   );
 };
 

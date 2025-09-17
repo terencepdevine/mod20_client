@@ -9,7 +9,7 @@ import { SystemType, RoleType, RaceType, TraitType } from "@mod20/types";
  */
 export type SystemFormData = Pick<
   SystemType,
-  "name" | "introduction" | "mental" | "mentalName" | "mentalConditions"
+  "name" | "introduction" | "mental" | "mentalName" | "mentalConditions" | "backgroundColorFamily" | "primaryColorFamily"
 > & {
   backgroundImageId?: string | null;
   maxLevel: number; // Maximum character level (1-100)
@@ -122,6 +122,8 @@ export const createSystemFormData = (
   mental: system.mental || false,
   mentalName: system.mentalName || "",
   mentalConditions: system.mentalConditions || [],
+  backgroundColorFamily: system.backgroundColorFamily || "gray",
+  primaryColorFamily: system.primaryColorFamily || "blue",
 });
 
 // =============================================================================

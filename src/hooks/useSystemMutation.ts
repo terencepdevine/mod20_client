@@ -55,17 +55,17 @@ export const useSystemMutation = (systemSlug: string) => {
       if (context?.previousSystem) {
         queryClient.setQueryData(["system", systemSlug], context.previousSystem);
       }
-      console.error("System update error:", err);
       toast.error(err.message);
     },
     onSettled: (_data, _error, variables) => {
-      queryClient.invalidateQueries({
-        queryKey: ["system", variables.systemSlug],
-      });
+      // Add a small delay before invalidating to ensure database is fully updated
       setTimeout(() => {
+        queryClient.invalidateQueries({
+          queryKey: ["system", variables.systemSlug],
+        });
         setLocalImageChanges({});
         setOptimisticData(null);
-      }, 100);
+      }, 200);
     },
   });
 

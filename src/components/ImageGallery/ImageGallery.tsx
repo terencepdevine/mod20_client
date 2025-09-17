@@ -1,3 +1,5 @@
+import { useState } from "react";
+import ImageModal from "../ImageModal/ImageModal";
 import "./ImageGallery.scss";
 
 interface ImageGalleryProps {
@@ -11,12 +13,20 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
   basePath = "http://localhost:3000/public/img/roles/",
   alt = "",
 }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+
   if (!images || images.length === 0) {
     return null;
   }
 
   const displayImages = images.slice(0, 4);
   const [featuredImage, ...thumbnailImages] = displayImages;
+
+  const handleImageClick = (index: number) => {
+    setSelectedImageIndex(index);
+    setIsModalOpen(true);
+  };
 
   return (
     <div className="image-gallery">
@@ -25,7 +35,8 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
           <img
             src={`${basePath}${featuredImage}`}
             alt={`${alt} 1`}
-            className="image-gallery__image"
+            className="image-gallery__image image-gallery__image--clickable"
+            onClick={() => handleImageClick(0)}
           />
         </div>
       )}
@@ -36,12 +47,21 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
               <img
                 src={`${basePath}${image}`}
                 alt={`${alt} ${index + 2}`}
-                className="image-gallery__image"
+                className="image-gallery__image image-gallery__image--clickable"
+                onClick={() => handleImageClick(index + 1)}
               />
             </div>
           ))}
         </div>
       )}
+      <ImageModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        images={images}
+        currentImageIndex={selectedImageIndex}
+        basePath={basePath}
+        alt={alt}
+      />
     </div>
   );
 };

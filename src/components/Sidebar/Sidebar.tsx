@@ -1,5 +1,5 @@
 import SidebarNavigation from "./SidebarNavigation";
-import "./Sidebar.css";
+import "./Sidebar.scss";
 
 const Sidebar: React.FC = () => {
   return (

@@ -28,5 +28,9 @@
     height: auto;
     object-fit: cover;
     display: block;
+
+    &--clickable {
+      cursor: pointer;
+    }
   }
 }
